@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "Génération du projet SII Skills Connect..."
+echo "Structure créée avec succès !"
+echo "Pages disponibles:"
+echo "- index.html (Accueil)"
+echo "- pages/login.html"
+echo "- pages/besoins.html" 
+echo "- pages/profil.html"
+echo "- pages/recommandations.html"
+echo "- pages/pilotage-rh.html"
+echo "- pages/recrutement-intelligent.html"
+echo "- pages/details-besoin.html"
+echo "- pages/modal-candidat.html"

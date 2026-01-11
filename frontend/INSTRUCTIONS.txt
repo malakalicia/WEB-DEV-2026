@@ -1,0 +1,117 @@
+═══════════════════════════════════════════════════════════════
+    SII SKILLS CONNECT - INSTRUCTIONS D'INSTALLATION
+═══════════════════════════════════════════════════════════════
+
+📦 CONTENU DU PROJET
+══════════════════════
+sii-skills-connect/
+├── index.html                          # Page d'accueil avec navigation
+├── css/
+│   └── style.css                       # Styles communs (CSS professionnel)
+├── js/
+│   └── app.js                          # Logique commune + données Maroc
+└── pages/
+    ├── login.html                      # Page de connexion
+    ├── besoins.html                    # Dashboard besoins (CRUD complet)
+    ├── profil.html                     # Profil professionnel
+    ├── recommandations.html            # Tableau recommandations
+    ├── pilotage-rh.html               # Matching candidats-besoins
+    ├── recrutement-intelligent.html   # Explorateurs + graphique radar
+    ├── details-besoin.html            # Détails besoin + sidebar
+    └── modal-candidat.html            # Modal ajout candidat
+
+🚀 COMMENT OUVRIR ET TESTER
+═══════════════════════════
+
+MÉTHODE 1 : Ouverture Directe (Recommandée)
+─────────────────────────────────────────────
+1. Extraire le fichier ZIP dans un dossier
+2. Double-cliquer sur "index.html"
+3. Votre navigateur s'ouvre automatiquement
+4. Cliquer sur les cartes pour naviguer entre les pages
+
+MÉTHODE 2 : Avec un Serveur Local (Optionnel)
+───────────────────────────────────────────────
+Si vous avez Python installé :
+
+# Python 3
+cd sii-skills-connect
+python -m http.server 8000
+
+# Python 2
+python -m SimpleHTTPServer 8000
+
+Puis ouvrir : http://localhost:8000
+
+MÉTHODE 3 : Avec VSCode Live Server
+─────────────────────────────────────
+1. Ouvrir le dossier dans VSCode
+2. Installer l'extension "Live Server"
+3. Clic droit sur index.html → "Open with Live Server"
+
+🌐 NAVIGATEURS SUPPORTÉS
+════════════════════════
+✅ Google Chrome (Recommandé)
+✅ Mozilla Firefox  
+✅ Microsoft Edge
+✅ Safari
+⚠️  Internet Explorer : Non supporté
+
+✨ FONCTIONNALITÉS IMPLÉMENTÉES
+═══════════════════════════════
+✓ Données réalistes contexte Maroc (villes, noms, compétences)
+✓ CRUD complet sur besoins (Créer, Lire, Modifier, Supprimer)
+✓ Filtres et recherche en temps réel
+✓ Pagination fonctionnelle
+✓ Matching candidats-besoins avec %
+✓ Graphiques interactifs (radar, donut)
+✓ Drag & drop de fichiers
+✓ Modals et formulaires complets
+✓ LocalStorage pour persistance des données
+✓ Notifications toast
+✓ Responsive design (mobile, tablet, desktop)
+
+📊 DONNÉES GÉNÉRÉES AUTOMATIQUEMENT
+═══════════════════════════════════
+• 50 candidats générés avec profils marocains
+• 30 besoins en recrutement
+• Villes : Casablanca, Rabat, Tanger, Marrakech, Fès, etc.
+• Compétences techniques réalistes
+• Statuts et disponibilités variés
+
+🎯 PARCOURS UTILISATEUR
+═══════════════════════
+1. index.html        → Page d'accueil avec toutes les pages
+2. login.html        → Connexion (email + mot de passe)
+3. besoins.html      → Gérer les besoins (ajouter, modifier, supprimer)
+4. profil.html       → Voir profil complet candidat
+5. recommandations.html    → Vue recommandations
+6. pilotage-rh.html        → Matching intelligent
+7. recrutement-intelligent.html → Explorateurs
+8. details-besoin.html     → Détails avec sidebar
+9. modal-candidat.html     → Formulaire modal
+
+🔧 PERSONNALISATION
+═══════════════════
+• Modifier les couleurs dans css/style.css (variables CSS :root)
+• Ajouter des données dans js/app.js (DATA_MAROC)
+• Personnaliser les formulaires dans chaque page HTML
+
+💡 ASTUCES
+══════════
+• Les données sont sauvegardées dans localStorage
+• Pour réinitialiser : Ouvrir Console (F12) → localStorage.clear()
+• Les fonctionnalités sont toutes interactives
+• Tester les filtres, la recherche, la pagination
+
+📧 CRÉDITS
+══════════
+Projet : SII Skills Connect
+Thème : Plateforme de gestion RH et recrutement
+Technologies : HTML5, CSS3, JavaScript (Vanilla)
+Design : Clean, Professionnel, Responsive
+Données : Contexte Maroc
+
+═══════════════════════════════════════════════════════════════
+           PRÊT À TESTER ! Ouvrez index.html 🚀
+═══════════════════════════════════════════════════════════════
