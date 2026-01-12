@@ -3,244 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SII Skills Connect - Accueil</title>
+    <title>SII Skills Connect - Connexion</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Archivo:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .hero-section {
-            min-height: calc(100vh - 56px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
+        body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin-top: 56px;
-        }
-        
-        .hero-logo {
-            width: 120px;
-            height: 120px;
-            background: white;
-            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 32px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            min-height: 100vh;
         }
-        
-        .hero-logo svg {
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-logo {
             width: 80px;
             height: 80px;
-        }
-        
-        .hero-title {
-            font-size: 48px;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .hero-subtitle {
-            font-size: 24px;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 48px;
-            max-width: 600px;
-        }
-        
-        .pages-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            max-width: 1200px;
-            width: 100%;
-        }
-        
-        .page-card {
-            background: white;
-            border-radius: 12px;
-            padding: 32px;
-            text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .page-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-        }
-        
-        .page-icon {
-            width: 64px;
-            height: 64px;
+            margin: 0 auto 24px;
             background: linear-gradient(135deg, #636AE8, #3B82F6);
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
         }
-        
-        .page-icon svg {
-            width: 32px;
-            height: 32px;
-            fill: white;
-        }
-        
-        .page-title {
-            font-size: 20px;
-            font-weight: 600;
+
+        .login-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-        
-        .page-description {
+
+        .login-subtitle {
+            text-align: center;
             font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.6;
+            margin-bottom: 32px;
         }
-        
-        .footer-info {
-            margin-top: 64px;
-            padding: 32px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            margin-top: 8px;
         }
-        
-        .footer-info h3 {
-            color: white;
-            margin-bottom: 16px;
+
+        .error-message {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
         }
-        
-        .footer-info ul {
-            list-style: none;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 2;
+
+        .error-message.show {
+            display: block;
         }
-        
-        .footer-info li:before {
-            content: "✓ ";
-            color: #1DD75B;
-            font-weight: bold;
-            margin-right: 8px;
+
+        .demo-credentials {
+            margin-top: 24px;
+            padding: 16px;
+            background: #F3F4F6;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .demo-credentials strong {
+            color: var(--text-primary);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #E5E7EB;
+            border-top-color: #636AE8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="hero-section">
-        <div class="hero-logo">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="40" fill="#636AE8"/>
-                <text x="50" y="62" font-family="Arial" font-size="36" font-weight="bold" fill="white" text-anchor="middle">SII</text>
+    <div class="login-container">
+        <div class="login-logo">
+            <svg viewBox="0 0 50 50" width="50" height="50">
+                <text x="25" y="33" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">SII</text>
             </svg>
         </div>
-        
-        <h1 class="hero-title">SII Skills Connect</h1>
-        <p class="hero-subtitle">Plateforme de gestion des talents et du recrutement</p>
-        
-        <div class="pages-grid">
-            <a href="pages/login.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Connexion</div>
-                <div class="page-description">Page de connexion sécurisée pour accéder à la plateforme</div>
-            </a>
-            
-            <a href="pages/besoins.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M21 13.255A23.931 23.931 0 0 1 12 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2m4 6h.01M5 20h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Dashboard Besoins</div>
-                <div class="page-description">Gestion complète des besoins en recrutement avec CRUD fonctionnel</div>
-            </a>
-            
-            <a href="pages/profil.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Profil Professionnel</div>
-                <div class="page-description">Profil complet avec expérience, compétences, certifications et disponibilité</div>
-            </a>
-            
-            <a href="pages/recommandations.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                    </svg>
-                </div>
-                <div class="page-title">Tableau Recommandations</div>
-                <div class="page-description">Vue d'ensemble des candidats recommandés avec statistiques</div>
-            </a>
-            
-            <a href="pages/pilotage-rh.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Pilotage RH</div>
-                <div class="page-description">Matching candidats-besoins avec taux de compatibilité</div>
-            </a>
-            
-            <a href="pages/recrutement-intelligent.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Recrutement Intelligent</div>
-                <div class="page-description">Explorateurs avec graphique radar de compatibilité</div>
-            </a>
-            
-            <a href="pages/details-besoin.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Détails du Besoin</div>
-                <div class="page-description">Formulaire détaillé avec activités et documents associés</div>
-            </a>
-            
-            <a href="pages/modal-candidat.html" class="page-card">
-                <div class="page-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"/>
-                    </svg>
-                </div>
-                <div class="page-title">Modal Ajout Candidat</div>
-                <div class="page-description">Formulaire modal complet pour ajouter un nouveau candidat</div>
-            </a>
+
+        <h1 class="login-title">Bienvenue sur SII Skills Connect</h1>
+        <p class="login-subtitle">Connectez-vous pour accéder à votre espace</p>
+
+        <div id="errorMessage" class="error-message">
+            L'email ou le mot de passe est incorrect.
         </div>
-        
-        <div class="footer-info">
-            <h3>✨ Fonctionnalités Principales</h3>
-            <ul>
-                <li>Gestion complète des candidats et besoins (CRUD)</li>
-                <li>Système de matching intelligent avec pourcentages</li>
-                <li>Filtres et recherche en temps réel</li>
-                <li>Pagination fonctionnelle</li>
-                <li>Données réalistes contexte Maroc</li>
-                <li>Interface responsive et moderne</li>
-                <li>Graphiques interactifs (radar, donut)</li>
-                <li>Drag & drop de fichiers</li>
-            </ul>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email professionnel</label>
+                <input type="email" class="form-input" id="email" placeholder="exemple@sii.ma" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" class="form-input" id="password" placeholder="Entrez votre mot de passe" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-login" id="btnLogin">
+                Se connecter
+            </button>
+
+            <div id="loading" class="loading">
+                <span class="spinner"></span>
+                <span style="margin-left: 8px;">Connexion en cours...</span>
+            </div>
+        </form>
+
+        <div class="demo-credentials">
+            <strong>Identifiants de test :</strong><br>
+            Email : <code>admin@sii.ma</code><br>
+            Mot de passe : <code>admin123</code>
         </div>
     </div>
-    
-    <script src="js/app.js"></script>
+
+    <script src="js/api-simulator.js"></script>
+    <script>
+        // Vérifier si déjà connecté
+        if (HTTP.getToken()) {
+            window.location.href = 'pages/recrutement-intelligent.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            const btnLogin = document.getElementById('btnLogin');
+
+            // Masquer l'erreur et afficher le chargement
+            errorMessage.classList.remove('show');
+            loading.classList.add('show');
+            btnLogin.disabled = true;
+
+            try {
+                // Appel API: POST http://localhost:3000/api/users/login
+                // Body: { Mail: string, pass: string }
+                const response = await HTTP.login(email, password);
+
+                // Réponse: { login: boolean, token: string }
+                if (response.login === true) {
+                    // Ajouter le token en localStorage
+                    HTTP.setToken(response.token);
+
+                    // Rediriger vers la page "Recrutement intelligent"
+                    window.location.href = 'pages/recrutement-intelligent.html';
+                } else {
+                    // Afficher message d'erreur
+                    errorMessage.classList.add('show');
+                }
+            } catch (error) {
+                console.error('Erreur de connexion:', error);
+                errorMessage.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+                errorMessage.classList.add('show');
+            } finally {
+                loading.classList.remove('show');
+                btnLogin.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

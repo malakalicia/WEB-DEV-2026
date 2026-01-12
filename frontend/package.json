@@ -1,0 +1,33 @@
+{
+  "name": "sii-skills-connect-frontend",
+  "version": "1.0.0",
+  "description": "Frontend pour SII Skills Connect - Plateforme de gestion des talents et du recrutement",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "sii",
+    "recrutement",
+    "skills",
+    "frontend"
+  ],
+  "author": "SII Maroc",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "verbose": true,
+    "collectCoverageFrom": [
+      "js/**/*.js"
+    ]
+  }
+}

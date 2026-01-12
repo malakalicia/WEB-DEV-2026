@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SII Skills Connect - Besoins</title>
+    <title>SII Skills Connect - Candidats</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700&display=swap" rel="stylesheet">
@@ -89,41 +89,36 @@
             background: var(--neutral-50);
         }
 
-        .competences-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .competence-tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background: var(--neutral-100);
-            color: var(--text-primary);
-            border-radius: 12px;
-            font-size: 12px;
-        }
-
-        .badge-niveau {
+        .badge-profil {
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 500;
         }
 
-        .badge-niveau.urgent {
-            background: #FEE2E2;
-            color: #DC2626;
+        .badge-profil.developpeur {
+            background: #DBEAFE;
+            color: #1D4ED8;
         }
 
-        .badge-niveau.moyen {
+        .badge-profil.data-scientist {
+            background: #F3E8FF;
+            color: #7C3AED;
+        }
+
+        .badge-profil.devops {
             background: #FEF3C7;
             color: #D97706;
         }
 
-        .badge-niveau.faible {
+        .badge-profil.chef-projet {
             background: #DCFCE7;
             color: #16A34A;
+        }
+
+        .badge-profil.designer {
+            background: #FCE7F3;
+            color: #DB2777;
         }
 
         .badge-statut {
@@ -133,14 +128,24 @@
             font-weight: 500;
         }
 
-        .badge-statut.ouvert {
+        .badge-statut.junior {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+
+        .badge-statut.intermediaire {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .badge-statut.senior {
             background: #DCFCE7;
             color: #16A34A;
         }
 
-        .badge-statut.cloture {
-            background: #F3F4F6;
-            color: #6B7280;
+        .badge-statut.expert {
+            background: #F3E8FF;
+            color: #7C3AED;
         }
 
         .action-buttons {
@@ -206,7 +211,7 @@
             background: var(--white);
             border-radius: var(--radius-xl);
             width: 100%;
-            max-width: 550px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
             transform: scale(0.9);
@@ -259,6 +264,12 @@
             border-top: 1px solid var(--border-color);
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -270,52 +281,6 @@
             height: 64px;
             margin-bottom: 16px;
             opacity: 0.5;
-        }
-
-        .competences-input-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            min-height: 50px;
-            cursor: text;
-        }
-
-        .competences-input-container:focus-within {
-            border-color: var(--primary-500);
-            box-shadow: 0 0 0 3px rgba(99, 106, 232, 0.1);
-        }
-
-        .competences-input-container .tag {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            background: var(--primary-500);
-            color: white;
-            border-radius: 16px;
-            font-size: 13px;
-        }
-
-        .competences-input-container .tag button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .competences-input-container input {
-            flex: 1;
-            min-width: 100px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            padding: 4px;
         }
 
         .pagination {
@@ -331,6 +296,13 @@
             color: var(--text-secondary);
             margin-right: 16px;
         }
+
+        .comment-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -345,8 +317,8 @@
         </a>
 
         <nav class="header-menu">
-            <a href="besoins.html" class="header-menu-item active">Besoins</a>
-            <a href="candidats.html" class="header-menu-item">Candidats</a>
+            <a href="besoins.html" class="header-menu-item">Besoins</a>
+            <a href="candidats.html" class="header-menu-item active">Candidats</a>
             <a href="recrutement-intelligent.html" class="header-menu-item">Recrutement intelligent</a>
         </nav>
 
@@ -363,19 +335,19 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="page-header">
-            <h1 class="page-title">Gestion des Besoins</h1>
+            <h1 class="page-title">Gestion des Candidats</h1>
             <button class="btn btn-primary" onclick="openAddModal()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"/>
                     <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Ajouter besoin
+                Ajouter candidat
             </button>
         </div>
 
         <div class="table-card">
             <div class="table-header">
-                <span class="table-title">Liste des besoins</span>
+                <span class="table-title">Liste des candidats</span>
                 <div class="table-actions">
                     <input type="text" class="search-input" placeholder="Rechercher..." id="searchInput" oninput="filterTable()">
                 </div>
@@ -386,10 +358,12 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Poste recherche</th>
-                            <th>Competences requises</th>
-                            <th>Niveau d'urgence</th>
-                            <th>Statut</th>
+                            <th>Proposition</th>
+                            <th>Nom et Prenom</th>
+                            <th>Profil</th>
+                            <th>Qualification</th>
+                            <th>Experience</th>
+                            <th>Commentaire</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -401,9 +375,12 @@
 
             <div id="emptyState" class="empty-state hidden">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
-                <p>Aucun besoin trouve</p>
+                <p>Aucun candidat trouve</p>
             </div>
 
             <div class="pagination" id="pagination">
@@ -427,7 +404,7 @@
     <div class="modal-overlay" id="modal">
         <div class="modal-container">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Ajouter un besoin</h2>
+                <h2 class="modal-title" id="modalTitle">Ajouter un candidat</h2>
                 <button class="modal-close" onclick="closeModal()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -436,45 +413,67 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="besoinForm">
-                    <input type="hidden" id="besoinId">
+                <form id="candidatForm">
+                    <input type="hidden" id="candidatId">
 
-                    <div class="form-group">
-                        <label class="form-label">Poste recherche *</label>
-                        <input type="text" class="form-input" id="poste" placeholder="Ex: Developpeur Full Stack" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Competences requises *</label>
-                        <div class="competences-input-container" id="competencesContainer" onclick="document.getElementById('competencesInput').focus()">
-                            <input type="text" id="competencesInput" placeholder="Tapez une competence et appuyez sur Entree">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom de la proposition *</label>
+                            <input type="text" class="form-input" id="proposition" placeholder="Ex: Mission Client A" required>
                         </div>
-                        <small style="color: var(--text-secondary); font-size: 12px;">Appuyez sur Entree pour ajouter une competence</small>
+
+                        <div class="form-group">
+                            <label class="form-label">Nom et prenom *</label>
+                            <input type="text" class="form-input" id="name" placeholder="Ex: Mohamed El Alami" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-input" id="email" placeholder="exemple@email.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Experience (annees) *</label>
+                            <input type="number" class="form-input" id="experience" placeholder="Ex: 5" min="0" max="50" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Profil *</label>
+                            <select class="form-select" id="profil" required>
+                                <option value="">Selectionnez un profil</option>
+                                <option value="0">Developpeur</option>
+                                <option value="1">Data Scientist</option>
+                                <option value="2">DevOps</option>
+                                <option value="3">Chef de Projet</option>
+                                <option value="4">Designer</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Statut de qualification *</label>
+                            <select class="form-select" id="statut" required>
+                                <option value="">Selectionnez un statut</option>
+                                <option value="0">Junior</option>
+                                <option value="1">Intermediaire</option>
+                                <option value="2">Senior</option>
+                                <option value="3">Expert</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Niveau d'urgence *</label>
-                        <select class="form-select" id="niveau" required>
-                            <option value="">Selectionnez un niveau</option>
-                            <option value="0">Faible</option>
-                            <option value="1">Moyen</option>
-                            <option value="2">Urgent</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Statut *</label>
-                        <select class="form-select" id="statut" required>
-                            <option value="">Selectionnez un statut</option>
-                            <option value="0">Ouvert</option>
-                            <option value="1">Cloture</option>
-                        </select>
+                        <label class="form-label">Commentaire</label>
+                        <textarea class="form-textarea" id="commentaire" placeholder="Notes sur le candidat..." rows="3"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
-                <button class="btn btn-primary" onclick="saveBesoin()">Enregistrer</button>
+                <button class="btn btn-primary" onclick="saveCandidat()">Enregistrer</button>
             </div>
         </div>
     </div>
@@ -492,7 +491,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Etes-vous sur de vouloir supprimer ce besoin ? Cette action est irreversible.</p>
+                <p>Etes-vous sur de vouloir supprimer ce candidat ? Cette action est irreversible.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDeleteModal()">Annuler</button>
@@ -504,34 +503,30 @@
     <script src="../js/api-simulator.js"></script>
     <script>
         // Variables globales
-        let besoins = [];
-        let competencesTags = [];
+        let candidats = [];
         let currentPage = 1;
         let itemsPerPage = 10;
         let deleteId = null;
 
         // Labels
-        const niveauxLabels = ['Faible', 'Moyen', 'Urgent'];
-        const niveauxClasses = ['faible', 'moyen', 'urgent'];
-        const statutsLabels = ['Ouvert', 'Cloture'];
-        const statutsClasses = ['ouvert', 'cloture'];
+        const profilsLabels = ['Developpeur', 'Data Scientist', 'DevOps', 'Chef de Projet', 'Designer'];
+        const profilsClasses = ['developpeur', 'data-scientist', 'devops', 'chef-projet', 'designer'];
+        const statutsLabels = ['Junior', 'Intermediaire', 'Senior', 'Expert'];
+        const statutsClasses = ['junior', 'intermediaire', 'senior', 'expert'];
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', async function() {
             // Verifier l'authentification
             if (!Auth.checkAuth()) return;
 
-            // Charger les besoins
-            await loadBesoins();
-
-            // Gestion des competences (tags)
-            setupCompetencesInput();
+            // Charger les candidats
+            await loadCandidats();
         });
 
-        // Charger les besoins depuis l'API
-        async function loadBesoins() {
+        // Charger les candidats depuis l'API
+        async function loadCandidats() {
             try {
-                const response = await HTTP.getBesoins();
+                const response = await HTTP.getCandidats();
 
                 if (response.result === false) {
                     // Token invalide, rediriger vers login
@@ -539,11 +534,11 @@
                     return;
                 }
 
-                besoins = response.besoins || [];
+                candidats = response.candidats || [];
                 renderTable();
             } catch (error) {
-                console.error('Erreur chargement besoins:', error);
-                showNotification('Erreur lors du chargement des besoins', 'error');
+                console.error('Erreur chargement candidats:', error);
+                showNotification('Erreur lors du chargement des candidats', 'error');
             }
         }
 
@@ -553,48 +548,58 @@
             const emptyState = document.getElementById('emptyState');
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
 
-            // Filtrer les besoins
-            let filteredBesoins = besoins.filter(b => {
-                return b.poste.toLowerCase().includes(searchValue) ||
-                       b.competences.some(c => c.toLowerCase().includes(searchValue));
+            // Filtrer les candidats
+            let filteredCandidats = candidats.filter(c => {
+                return c.name.toLowerCase().includes(searchValue) ||
+                       c.proposition.toLowerCase().includes(searchValue) ||
+                       c.email.toLowerCase().includes(searchValue) ||
+                       profilsLabels[c.profil].toLowerCase().includes(searchValue);
             });
 
             // Pagination
-            const totalPages = Math.ceil(filteredBesoins.length / itemsPerPage);
+            const totalPages = Math.ceil(filteredCandidats.length / itemsPerPage);
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
-            const paginatedBesoins = filteredBesoins.slice(start, end);
+            const paginatedCandidats = filteredCandidats.slice(start, end);
 
-            if (paginatedBesoins.length === 0) {
+            if (paginatedCandidats.length === 0) {
                 tbody.innerHTML = '';
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
 
-                tbody.innerHTML = paginatedBesoins.map(besoin => `
+                tbody.innerHTML = paginatedCandidats.map(candidat => `
                     <tr>
-                        <td><strong>#${besoin.id}</strong></td>
-                        <td>${besoin.poste}</td>
+                        <td><strong>#${candidat.id}</strong></td>
+                        <td>${candidat.proposition}</td>
                         <td>
-                            <div class="competences-list">
-                                ${besoin.competences.map(c => `<span class="competence-tag">${c}</span>`).join('')}
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #636AE8, #3B82F6); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">
+                                    ${candidat.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500;">${candidat.name}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">${candidat.email}</div>
+                                </div>
                             </div>
                         </td>
                         <td>
-                            <span class="badge-niveau ${niveauxClasses[besoin.niveau]}">${niveauxLabels[besoin.niveau]}</span>
+                            <span class="badge-profil ${profilsClasses[candidat.profil]}">${profilsLabels[candidat.profil]}</span>
                         </td>
                         <td>
-                            <span class="badge-statut ${statutsClasses[besoin.statut]}">${statutsLabels[besoin.statut]}</span>
+                            <span class="badge-statut ${statutsClasses[candidat.statut]}">${statutsLabels[candidat.statut]}</span>
                         </td>
+                        <td>${candidat.experience} ans</td>
+                        <td class="comment-cell" title="${candidat.commentaire || ''}">${candidat.commentaire || '-'}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-icon edit" onclick="editBesoin(${besoin.id})" title="Modifier">
+                                <button class="btn-icon edit" onclick="editCandidat(${candidat.id})" title="Modifier">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
                                 </button>
-                                <button class="btn-icon delete" onclick="deleteBesoin(${besoin.id})" title="Supprimer">
+                                <button class="btn-icon delete" onclick="deleteCandidat(${candidat.id})" title="Supprimer">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"/>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -607,7 +612,7 @@
             }
 
             // Pagination
-            renderPagination(filteredBesoins.length, totalPages);
+            renderPagination(filteredCandidats.length, totalPages);
         }
 
         // Afficher la pagination
@@ -646,11 +651,12 @@
 
         function changePage(page) {
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const filteredBesoins = besoins.filter(b => {
-                return b.poste.toLowerCase().includes(searchValue) ||
-                       b.competences.some(c => c.toLowerCase().includes(searchValue));
+            const filteredCandidats = candidats.filter(c => {
+                return c.name.toLowerCase().includes(searchValue) ||
+                       c.proposition.toLowerCase().includes(searchValue) ||
+                       c.email.toLowerCase().includes(searchValue);
             });
-            const totalPages = Math.ceil(filteredBesoins.length / itemsPerPage);
+            const totalPages = Math.ceil(filteredCandidats.length / itemsPerPage);
 
             if (page >= 1 && page <= totalPages) {
                 currentPage = page;
@@ -664,79 +670,28 @@
             renderTable();
         }
 
-        // Gestion des competences (tags input)
-        function setupCompetencesInput() {
-            const input = document.getElementById('competencesInput');
-            const container = document.getElementById('competencesContainer');
-
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const value = this.value.trim();
-                    if (value && !competencesTags.includes(value)) {
-                        competencesTags.push(value);
-                        renderCompetencesTags();
-                    }
-                    this.value = '';
-                }
-
-                if (e.key === 'Backspace' && this.value === '' && competencesTags.length > 0) {
-                    competencesTags.pop();
-                    renderCompetencesTags();
-                }
-            });
-        }
-
-        function renderCompetencesTags() {
-            const container = document.getElementById('competencesContainer');
-            const input = document.getElementById('competencesInput');
-
-            const tagsHtml = competencesTags.map((tag, index) => `
-                <span class="tag">
-                    ${tag}
-                    <button type="button" onclick="removeCompetence(${index})">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </span>
-            `).join('');
-
-            container.innerHTML = tagsHtml + `<input type="text" id="competencesInput" placeholder="${competencesTags.length === 0 ? 'Tapez une competence et appuyez sur Entree' : ''}">`;
-
-            // Re-attacher l'evenement
-            setupCompetencesInput();
-        }
-
-        function removeCompetence(index) {
-            competencesTags.splice(index, 1);
-            renderCompetencesTags();
-        }
-
         // Modal Ajouter
         function openAddModal() {
-            document.getElementById('modalTitle').textContent = 'Ajouter un besoin';
-            document.getElementById('besoinForm').reset();
-            document.getElementById('besoinId').value = '';
-            competencesTags = [];
-            renderCompetencesTags();
+            document.getElementById('modalTitle').textContent = 'Ajouter un candidat';
+            document.getElementById('candidatForm').reset();
+            document.getElementById('candidatId').value = '';
             document.getElementById('modal').classList.add('active');
         }
 
         // Modal Modifier
-        function editBesoin(id) {
-            const besoin = besoins.find(b => b.id === id);
-            if (!besoin) return;
+        function editCandidat(id) {
+            const candidat = candidats.find(c => c.id === id);
+            if (!candidat) return;
 
-            document.getElementById('modalTitle').textContent = 'Modifier le besoin';
-            document.getElementById('besoinId').value = besoin.id;
-            document.getElementById('poste').value = besoin.poste;
-            document.getElementById('niveau').value = besoin.niveau;
-            document.getElementById('statut').value = besoin.statut;
-
-            competencesTags = [...besoin.competences];
-            renderCompetencesTags();
+            document.getElementById('modalTitle').textContent = 'Modifier le candidat';
+            document.getElementById('candidatId').value = candidat.id;
+            document.getElementById('proposition').value = candidat.proposition;
+            document.getElementById('name').value = candidat.name;
+            document.getElementById('email').value = candidat.email;
+            document.getElementById('profil').value = candidat.profil;
+            document.getElementById('statut').value = candidat.statut;
+            document.getElementById('experience').value = candidat.experience;
+            document.getElementById('commentaire').value = candidat.commentaire || '';
 
             document.getElementById('modal').classList.add('active');
         }
@@ -746,35 +701,37 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        // Sauvegarder besoin
-        async function saveBesoin() {
-            const id = document.getElementById('besoinId').value;
-            const poste = document.getElementById('poste').value.trim();
-            const niveau = parseInt(document.getElementById('niveau').value);
+        // Sauvegarder candidat
+        async function saveCandidat() {
+            const id = document.getElementById('candidatId').value;
+            const proposition = document.getElementById('proposition').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const profil = parseInt(document.getElementById('profil').value);
             const statut = parseInt(document.getElementById('statut').value);
+            const experience = parseInt(document.getElementById('experience').value);
+            const commentaire = document.getElementById('commentaire').value.trim();
 
-            if (!poste || isNaN(niveau) || isNaN(statut)) {
+            if (!proposition || !name || !email || isNaN(profil) || isNaN(statut) || isNaN(experience)) {
                 showNotification('Veuillez remplir tous les champs obligatoires', 'error');
                 return;
             }
 
-            if (competencesTags.length === 0) {
-                showNotification('Veuillez ajouter au moins une competence', 'error');
-                return;
-            }
-
-            const besoinData = {
-                poste,
-                competences: competencesTags,
-                niveau,
-                statut
+            const candidatData = {
+                proposition,
+                name,
+                email,
+                profil,
+                statut,
+                experience,
+                commentaire
             };
 
             try {
                 if (id) {
                     // Modifier
-                    besoinData.id = parseInt(id);
-                    const response = await HTTP.updateBesoin(besoinData);
+                    candidatData.id = parseInt(id);
+                    const response = await HTTP.updateCandidat(candidatData);
 
                     if (response.result === false) {
                         showNotification('Erreur lors de la modification', 'error');
@@ -782,15 +739,15 @@
                     }
 
                     // Mettre a jour localement
-                    const index = besoins.findIndex(b => b.id === parseInt(id));
+                    const index = candidats.findIndex(c => c.id === parseInt(id));
                     if (index !== -1) {
-                        besoins[index] = response;
+                        candidats[index] = response;
                     }
 
-                    showNotification('Besoin modifie avec succes', 'success');
+                    showNotification('Candidat modifie avec succes', 'success');
                 } else {
                     // Ajouter
-                    const response = await HTTP.addBesoin(besoinData);
+                    const response = await HTTP.addCandidat(candidatData);
 
                     if (response.result === false) {
                         showNotification('Erreur lors de l\'ajout', 'error');
@@ -798,9 +755,9 @@
                     }
 
                     // Ajouter en tete de tableau
-                    besoins.unshift(response);
+                    candidats.unshift(response);
 
-                    showNotification('Besoin ajoute avec succes', 'success');
+                    showNotification('Candidat ajoute avec succes', 'success');
                 }
 
                 closeModal();
@@ -811,8 +768,8 @@
             }
         }
 
-        // Supprimer besoin
-        function deleteBesoin(id) {
+        // Supprimer candidat
+        function deleteCandidat(id) {
             deleteId = id;
             document.getElementById('deleteModal').classList.add('active');
         }
@@ -826,7 +783,7 @@
             if (!deleteId) return;
 
             try {
-                const response = await HTTP.deleteBesoin(deleteId);
+                const response = await HTTP.deleteCandidat(deleteId);
 
                 if (response.result === false) {
                     showNotification('Erreur lors de la suppression', 'error');
@@ -834,9 +791,9 @@
                 }
 
                 // Supprimer localement
-                besoins = besoins.filter(b => b.id !== deleteId);
+                candidats = candidats.filter(c => c.id !== deleteId);
 
-                showNotification('Besoin supprime avec succes', 'success');
+                showNotification('Candidat supprime avec succes', 'success');
                 closeDeleteModal();
                 renderTable();
             } catch (error) {
