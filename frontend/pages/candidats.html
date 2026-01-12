@@ -170,6 +170,11 @@
             background: var(--neutral-50);
         }
 
+        .btn-icon.view:hover {
+            border-color: var(--secondary-500);
+            color: var(--secondary-500);
+        }
+
         .btn-icon.edit:hover {
             border-color: var(--primary-500);
             color: var(--primary-500);
@@ -178,6 +183,15 @@
         .btn-icon.delete:hover {
             border-color: var(--danger-500);
             color: var(--danger-500);
+        }
+
+        /* Clickable row */
+        .data-table tbody tr {
+            cursor: pointer;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--neutral-50);
         }
 
         .btn-icon svg {
@@ -569,7 +583,7 @@
                 emptyState.classList.add('hidden');
 
                 tbody.innerHTML = paginatedCandidats.map(candidat => `
-                    <tr>
+                    <tr onclick="viewCandidat(${candidat.id}, event)">
                         <td><strong>#${candidat.id}</strong></td>
                         <td>${candidat.proposition}</td>
                         <td>
@@ -592,7 +606,13 @@
                         <td>${candidat.experience} ans</td>
                         <td class="comment-cell" title="${candidat.commentaire || ''}">${candidat.commentaire || '-'}</td>
                         <td>
-                            <div class="action-buttons">
+                            <div class="action-buttons" onclick="event.stopPropagation()">
+                                <button class="btn-icon view" onclick="viewCandidat(${candidat.id})" title="Voir le profil">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
                                 <button class="btn-icon edit" onclick="editCandidat(${candidat.id})" title="Modifier">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -668,6 +688,12 @@
         function filterTable() {
             currentPage = 1;
             renderTable();
+        }
+
+        // Voir le profil du candidat
+        function viewCandidat(id, event) {
+            // Navigate to candidate detail page
+            window.location.href = `details-candidat.html?id=${id}`;
         }
 
         // Modal Ajouter
