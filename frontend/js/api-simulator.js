@@ -68,7 +68,11 @@ const DataStore = {
         if (saved) {
             try {
                 const parsed = JSON.parse(saved);
-                Object.assign(this.data, parsed);
+                // Only load besoins and candidats, NOT users (keep hardcoded credentials)
+                if (parsed.besoins) this.data.besoins = parsed.besoins;
+                if (parsed.candidats) this.data.candidats = parsed.candidats;
+                if (parsed.nextBesoinId) this.data.nextBesoinId = parsed.nextBesoinId;
+                if (parsed.nextCandidatId) this.data.nextCandidatId = parsed.nextCandidatId;
             } catch (error) {
                 console.error('Error loading data from localStorage:', error);
             }
