@@ -241,7 +241,8 @@ const TokenManager = {
     },
 
     isValid(token) {
-        return token && token.startsWith('smarthr_token_');
+        // Accepte les tokens JWT (backend) et les tokens de simulation
+        return token && token.length > 10;
     },
 
     get() {
