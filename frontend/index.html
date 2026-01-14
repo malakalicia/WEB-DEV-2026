@@ -123,6 +123,33 @@
             color: var(--text-primary);
         }
 
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper .form-input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
         .loading {
             display: none;
             text-align: center;
@@ -169,16 +196,14 @@
 
             <div class="form-group">
                 <label class="form-label">Mot de passe</label>
-                <input type="password" class="form-input" id="password" placeholder="Entrez votre mot de passe" required>
-                <div class="password-requirements" id="passwordRequirements">
-                    <strong>Le mot de passe doit contenir :</strong>
-                    <ul>
-                        <li id="req-length">Au moins 8 caracteres</li>
-                        <li id="req-uppercase">Au moins une majuscule (A-Z)</li>
-                        <li id="req-lowercase">Au moins une minuscule (a-z)</li>
-                        <li id="req-number">Au moins un chiffre (0-9)</li>
-                        <li id="req-special">Au moins un caractere special (!@#$%...)</li>
-                    </ul>
+                <div class="password-input-wrapper">
+                    <input type="password" class="form-input" id="password" placeholder="Entrez votre mot de passe" required>
+                    <button type="button" class="toggle-password" id="togglePassword" title="Afficher le mot de passe">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -203,7 +228,7 @@
     <script>
         /**
          * SmartHR Login Page
-         * Handles user authentication with password validation
+         * Simple authentication without format validation
          */
 
         // ============================================================================
@@ -213,16 +238,11 @@
             form: document.getElementById('loginForm'),
             email: document.getElementById('email'),
             password: document.getElementById('password'),
+            togglePassword: document.getElementById('togglePassword'),
+            eyeIcon: document.getElementById('eyeIcon'),
             errorMessage: document.getElementById('errorMessage'),
             loading: document.getElementById('loading'),
-            btnLogin: document.getElementById('btnLogin'),
-            requirements: {
-                length: document.getElementById('req-length'),
-                uppercase: document.getElementById('req-uppercase'),
-                lowercase: document.getElementById('req-lowercase'),
-                number: document.getElementById('req-number'),
-                special: document.getElementById('req-special')
-            }
+            btnLogin: document.getElementById('btnLogin')
         };
 
         // ============================================================================
@@ -237,27 +257,23 @@
 
             // Event listeners
             DOM.form.addEventListener('submit', handleLogin);
-            DOM.password.addEventListener('input', updatePasswordRequirements);
+            DOM.togglePassword.addEventListener('click', togglePasswordVisibility);
         }
 
         // ============================================================================
-        // PASSWORD VALIDATION UI
+        // TOGGLE PASSWORD VISIBILITY
         // ============================================================================
-        function updatePasswordRequirements() {
-            const password = DOM.password.value;
+        function togglePasswordVisibility() {
+            const isPassword = DOM.password.type === 'password';
+            DOM.password.type = isPassword ? 'text' : 'password';
 
-            updateRequirement('length', password.length >= PASSWORD_RULES.MIN_LENGTH);
-            updateRequirement('uppercase', /[A-Z]/.test(password));
-            updateRequirement('lowercase', /[a-z]/.test(password));
-            updateRequirement('number', /[0-9]/.test(password));
-            updateRequirement('special', /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password));
-        }
-
-        function updateRequirement(key, isValid) {
-            const element = DOM.requirements[key];
-            if (element) {
-                element.classList.toggle('valid', isValid);
-                element.classList.toggle('invalid', !isValid);
+            // Update icon
+            if (isPassword) {
+                DOM.eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+                DOM.togglePassword.title = 'Cacher le mot de passe';
+            } else {
+                DOM.eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+                DOM.togglePassword.title = 'Afficher le mot de passe';
             }
         }
 
@@ -273,16 +289,14 @@
             // Hide previous errors
             hideError();
 
-            // Validate email
-            if (!Validator.isValidEmail(email)) {
-                showError('Veuillez entrer une adresse email valide.');
+            // Simple validation - just check if fields are filled
+            if (!email) {
+                showError('Veuillez entrer votre email.');
                 return;
             }
 
-            // Validate password
-            const passwordValidation = Validator.validatePassword(password);
-            if (!passwordValidation.isValid) {
-                showError('Le mot de passe ne respecte pas les regles de securite :', passwordValidation.errors);
+            if (!password) {
+                showError('Veuillez entrer votre mot de passe.');
                 return;
             }
 
@@ -309,18 +323,8 @@
         // ============================================================================
         // UI HELPERS
         // ============================================================================
-        function showError(message, errors = []) {
-            let html = message;
-
-            if (errors.length > 0) {
-                html += '<ul>';
-                errors.forEach(err => {
-                    html += `<li>${Validator.escapeHtml(err)}</li>`;
-                });
-                html += '</ul>';
-            }
-
-            DOM.errorMessage.innerHTML = html;
+        function showError(message) {
+            DOM.errorMessage.innerHTML = message;
             DOM.errorMessage.classList.add('show');
         }
 
