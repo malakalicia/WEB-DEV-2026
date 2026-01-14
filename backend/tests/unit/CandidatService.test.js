@@ -88,7 +88,7 @@ describe('CandidatService', () => {
 
       await expect(candidatService.sendInterviewEmail(999))
         .rejects
-        .toThrow('Candidat non trouvé');
+        .toThrow('Candidat non trouve');
     });
   });
 
