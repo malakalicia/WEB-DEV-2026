@@ -67,17 +67,53 @@
             font-size: 14px;
             margin-bottom: 20px;
             display: none;
-            text-align: center;
+            text-align: left;
         }
 
         .error-message.show {
             display: block;
         }
 
+        .error-message ul {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .error-message li {
+            margin: 4px 0;
+        }
+
+        .password-requirements {
+            margin-top: 8px;
+            padding: 12px;
+            background: #F3F4F6;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .password-requirements ul {
+            margin: 8px 0 0 0;
+            padding-left: 16px;
+        }
+
+        .password-requirements li {
+            margin: 4px 0;
+        }
+
+        .password-requirements li.valid {
+            color: #16A34A;
+        }
+
+        .password-requirements li.invalid {
+            color: #DC2626;
+        }
+
         .demo-credentials {
             margin-top: 24px;
             padding: 16px;
-            background: #F3F4F6;
+            background: #EEF2FF;
+            border: 1px solid #C7D2FE;
             border-radius: 8px;
             font-size: 13px;
             color: var(--text-secondary);
@@ -123,11 +159,9 @@
         <h1 class="login-title">Bienvenue sur SmartHR</h1>
         <p class="login-subtitle">Connectez-vous pour acceder a votre espace</p>
 
-        <div id="errorMessage" class="error-message">
-            L'email ou le mot de passe est incorrect.
-        </div>
+        <div id="errorMessage" class="error-message"></div>
 
-        <form id="loginForm">
+        <form id="loginForm" novalidate>
             <div class="form-group">
                 <label class="form-label">Email professionnel</label>
                 <input type="email" class="form-input" id="email" placeholder="exemple@smarthr.ma" required>
@@ -136,6 +170,16 @@
             <div class="form-group">
                 <label class="form-label">Mot de passe</label>
                 <input type="password" class="form-input" id="password" placeholder="Entrez votre mot de passe" required>
+                <div class="password-requirements" id="passwordRequirements">
+                    <strong>Le mot de passe doit contenir :</strong>
+                    <ul>
+                        <li id="req-length">Au moins 8 caracteres</li>
+                        <li id="req-uppercase">Au moins une majuscule (A-Z)</li>
+                        <li id="req-lowercase">Au moins une minuscule (a-z)</li>
+                        <li id="req-number">Au moins un chiffre (0-9)</li>
+                        <li id="req-special">Au moins un caractere special (!@#$%...)</li>
+                    </ul>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary btn-login" id="btnLogin">
@@ -151,56 +195,149 @@
         <div class="demo-credentials">
             <strong>Identifiants de test :</strong><br>
             Email : <code>admin@smarthr.ma</code><br>
-            Mot de passe : <code>admin123</code>
+            Mot de passe : <code>Admin@123</code>
         </div>
     </div>
 
     <script src="js/api-simulator.js"></script>
     <script>
-        // Verifier si deja connecte
-        if (HTTP.getToken()) {
-            window.location.href = 'pages/recrutement-intelligent.html';
+        /**
+         * SmartHR Login Page
+         * Handles user authentication with password validation
+         */
+
+        // ============================================================================
+        // DOM ELEMENTS
+        // ============================================================================
+        const DOM = {
+            form: document.getElementById('loginForm'),
+            email: document.getElementById('email'),
+            password: document.getElementById('password'),
+            errorMessage: document.getElementById('errorMessage'),
+            loading: document.getElementById('loading'),
+            btnLogin: document.getElementById('btnLogin'),
+            requirements: {
+                length: document.getElementById('req-length'),
+                uppercase: document.getElementById('req-uppercase'),
+                lowercase: document.getElementById('req-lowercase'),
+                number: document.getElementById('req-number'),
+                special: document.getElementById('req-special')
+            }
+        };
+
+        // ============================================================================
+        // INITIALIZATION
+        // ============================================================================
+        function init() {
+            // Redirect if already logged in
+            if (TokenManager.isValid(TokenManager.get())) {
+                window.location.href = 'pages/recrutement-intelligent.html';
+                return;
+            }
+
+            // Event listeners
+            DOM.form.addEventListener('submit', handleLogin);
+            DOM.password.addEventListener('input', updatePasswordRequirements);
         }
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // ============================================================================
+        // PASSWORD VALIDATION UI
+        // ============================================================================
+        function updatePasswordRequirements() {
+            const password = DOM.password.value;
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
-            const loading = document.getElementById('loading');
-            const btnLogin = document.getElementById('btnLogin');
+            updateRequirement('length', password.length >= PASSWORD_RULES.MIN_LENGTH);
+            updateRequirement('uppercase', /[A-Z]/.test(password));
+            updateRequirement('lowercase', /[a-z]/.test(password));
+            updateRequirement('number', /[0-9]/.test(password));
+            updateRequirement('special', /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password));
+        }
 
-            // Masquer l'erreur et afficher le chargement
-            errorMessage.classList.remove('show');
-            loading.classList.add('show');
-            btnLogin.disabled = true;
+        function updateRequirement(key, isValid) {
+            const element = DOM.requirements[key];
+            if (element) {
+                element.classList.toggle('valid', isValid);
+                element.classList.toggle('invalid', !isValid);
+            }
+        }
+
+        // ============================================================================
+        // LOGIN HANDLER
+        // ============================================================================
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = DOM.email.value.trim();
+            const password = DOM.password.value;
+
+            // Hide previous errors
+            hideError();
+
+            // Validate email
+            if (!Validator.isValidEmail(email)) {
+                showError('Veuillez entrer une adresse email valide.');
+                return;
+            }
+
+            // Validate password
+            const passwordValidation = Validator.validatePassword(password);
+            if (!passwordValidation.isValid) {
+                showError('Le mot de passe ne respecte pas les regles de securite :', passwordValidation.errors);
+                return;
+            }
+
+            // Show loading state
+            setLoadingState(true);
 
             try {
-                // Appel API: POST http://localhost:3000/api/users/login
-                // Body: { Mail: string, pass: string }
                 const response = await HTTP.login(email, password);
 
-                // Reponse: { login: boolean, token: string }
                 if (response.login === true) {
-                    // Ajouter le token en localStorage
                     HTTP.setToken(response.token);
-
-                    // Rediriger vers la page "Recrutement intelligent"
                     window.location.href = 'pages/recrutement-intelligent.html';
                 } else {
-                    // Afficher message d'erreur
-                    errorMessage.classList.add('show');
+                    showError('Email ou mot de passe incorrect.');
                 }
             } catch (error) {
-                console.error('Erreur de connexion:', error);
-                errorMessage.textContent = 'Une erreur est survenue. Veuillez reessayer.';
-                errorMessage.classList.add('show');
+                console.error('Login error:', error);
+                showError('Une erreur est survenue. Veuillez reessayer.');
             } finally {
-                loading.classList.remove('show');
-                btnLogin.disabled = false;
+                setLoadingState(false);
             }
-        });
+        }
+
+        // ============================================================================
+        // UI HELPERS
+        // ============================================================================
+        function showError(message, errors = []) {
+            let html = message;
+
+            if (errors.length > 0) {
+                html += '<ul>';
+                errors.forEach(err => {
+                    html += `<li>${Validator.escapeHtml(err)}</li>`;
+                });
+                html += '</ul>';
+            }
+
+            DOM.errorMessage.innerHTML = html;
+            DOM.errorMessage.classList.add('show');
+        }
+
+        function hideError() {
+            DOM.errorMessage.classList.remove('show');
+            DOM.errorMessage.innerHTML = '';
+        }
+
+        function setLoadingState(isLoading) {
+            DOM.loading.classList.toggle('show', isLoading);
+            DOM.btnLogin.disabled = isLoading;
+        }
+
+        // ============================================================================
+        // START
+        // ============================================================================
+        init();
     </script>
 </body>
 </html>
