@@ -1,20 +1,28 @@
--- Données de test
+-- Donnees de test SmartHR
 
--- Mot de passe: "password123" (hashé avec bcrypt)
+-- Utilisateur admin
+-- Email: admin@smarthr.ma
+-- Mot de passe: Admin@123 (hashe avec bcrypt, 10 rounds)
 INSERT INTO users (email, password) VALUES
-('admin@recrutement.com', '$2a$10$N9qo8uLOickgx2ZMRZoMye7Z7pK7z7z/2QJQ9b3q3q3q3q3q3q3q3q');
+('admin@smarthr.ma', '$2a$10$YourHashHere');
+
+-- NOTE: Le hash ci-dessus est un placeholder.
+-- Pour creer un utilisateur fonctionnel, utilisez l'API:
+-- curl -X POST http://localhost:3000/api/users/register \
+--   -H "Content-Type: application/json" \
+--   -d '{"email":"admin@smarthr.ma","password":"Admin@123"}'
 
 -- Besoins de test
 INSERT INTO besoins (poste, competences, niveau, statut) VALUES
-('Développeur Full Stack', '["JavaScript", "React", "Node.js", "PostgreSQL"]', 2, 1),
+('Developpeur Full Stack', '["JavaScript", "React", "Node.js", "PostgreSQL"]', 2, 1),
 ('Designer UX/UI', '["Figma", "Adobe XD", "Prototypage", "Recherche utilisateur"]', 1, 1),
-('Chef de projet Agile', '["Scrum", "Jira", "Gestion d''équipe", "Planification"]', 0, 1),
+('Chef de projet Agile', '["Scrum", "Jira", "Gestion d''equipe", "Planification"]', 0, 1),
 ('Data Analyst', '["Python", "SQL", "Tableau", "Statistiques"]', 2, 0);
 
 -- Candidats de test
 INSERT INTO candidats (proposition, name, profil, statut, experience, commentaire, email) VALUES
-('Proposition JS-2023-001', 'Jean Dupont', 0, 2, 5, 'Excellent en React et Node.js', 'jean.dupont@email.com'),
-('Proposition DX-2023-002', 'Marie Curie', 1, 3, 8, 'Spécialiste UX avec portfolio impressionnant', 'marie.curie@email.com'),
-('Proposition PM-2023-003', 'Pierre Martin', 2, 2, 6, 'Expérience dans le secteur bancaire', 'pierre.martin@email.com'),
-('Proposition DA-2023-004', 'Sophie Bernard', 3, 1, 3, 'Jeune diplômée motivée', 'sophie.bernard@email.com'),
-('Proposition FS-2023-005', 'Thomas Leroy', 0, 3, 10, 'Expert en architecture microservices', 'thomas.leroy@email.com');
+('PROP-2024-001', 'Mohamed El Alami', 0, 2, 5, 'Excellent en React et Node.js', 'mohamed.elalami@email.com'),
+('PROP-2024-002', 'Fatima Bennani', 1, 3, 8, 'Specialiste UX avec portfolio impressionnant', 'fatima.bennani@email.com'),
+('PROP-2024-003', 'Ahmed Tazi', 2, 2, 6, 'Experience dans le secteur bancaire', 'ahmed.tazi@email.com'),
+('PROP-2024-004', 'Khadija Alaoui', 3, 1, 3, 'Jeune diplomee motivee', 'khadija.alaoui@email.com'),
+('PROP-2024-005', 'Youssef Fassi', 0, 3, 10, 'Expert en architecture microservices', 'youssef.fassi@email.com');
