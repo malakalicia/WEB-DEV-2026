@@ -25,7 +25,15 @@ describe('AuthService', () => {
       const mockUser = {
         id: 1,
         email: 'test@email.com',
-        password: 'hashed_password'
+        password: 'hashed_password',
+        toJSON: function() {
+          return {
+            id: this.id,
+            email: this.email,
+            created_at: null,
+            updated_at: null
+          };
+        }
       };
 
       mockUserRepository.findByEmail.mockResolvedValue(mockUser);
@@ -52,7 +60,15 @@ describe('AuthService', () => {
       const mockUser = {
         id: 1,
         email: 'test@email.com',
-        password: 'hashed_password'
+        password: 'hashed_password',
+        toJSON: function() {
+          return {
+            id: this.id,
+            email: this.email,
+            created_at: null,
+            updated_at: null
+          };
+        }
       };
 
       mockUserRepository.findByEmail.mockResolvedValue(mockUser);
