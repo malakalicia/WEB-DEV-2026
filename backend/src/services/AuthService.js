@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserRepository = require('../repositories/UserRepository');
+const { SECURITY_CONFIG } = require('../constants');
 
 // Regles de validation du mot de passe
 const PASSWORD_RULES = {
-  MIN_LENGTH: 8,
+  MIN_LENGTH: SECURITY_CONFIG.PASSWORD_MIN_LENGTH,
   REQUIRE_UPPERCASE: true,
   REQUIRE_LOWERCASE: true,
   REQUIRE_NUMBER: true,
@@ -13,8 +14,21 @@ const PASSWORD_RULES = {
 };
 
 class AuthService {
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(userRepository = new UserRepository()) {
+    this.userRepository = userRepository;
+  }
+
+  /**
+   * Genere un token JWT pour un utilisateur
+   * @param {object} user - Utilisateur pour lequel generer le token
+   * @returns {string} Token JWT
+   */
+  generateToken(user) {
+    return jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
   }
 
   /**
@@ -77,26 +91,20 @@ class AuthService {
       throw new Error('Email ou mot de passe incorrect');
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
+    const token = this.generateToken(user);
 
     return {
-      login: true,
+      success: true,
       token,
       user: user.toJSON()
     };
   }
 
   async register(email, password) {
-    // Validation de l'email
     if (!this.validateEmail(email)) {
       throw new Error('Format d\'email invalide');
     }
 
-    // Validation du mot de passe
     const passwordValidation = this.validatePassword(password);
     if (!passwordValidation.isValid) {
       throw new Error(passwordValidation.errors.join('. '));
@@ -108,20 +116,16 @@ class AuthService {
       throw new Error('Un utilisateur avec cet email existe deja');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, SECURITY_CONFIG.BCRYPT_ROUNDS);
     const user = await this.userRepository.create({
       email,
       password: hashedPassword
     });
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
-    );
+    const token = this.generateToken(user);
 
     return {
-      login: true,
+      success: true,
       token,
       user: user.toJSON()
     };

@@ -286,12 +286,12 @@ const API = {
 
         if (user) {
             return {
-                login: true,
+                success: true,
                 token: TokenManager.generate(user.id)
             };
         }
 
-        return { login: false, token: '' };
+        return { success: false, token: '' };
     },
 
     // -------------------------------------------------------------------------
