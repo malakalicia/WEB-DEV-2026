@@ -14,12 +14,11 @@
 
 | Nom | Email | Role |
 |-----|-------|------|
-| **Sanae Soujaa** | sanae.soujaa@gmail.com | Developpeur Full Stack |
-| **Malak Malk** | malak.malk@gmail.com | Developpeur Frontend |
-| **Safae Elhamdaoui** | safae.elhamdaoui@gmail.com | Developpeur Backend |
-| **Mohamed Houssam Lazrek** | houssam.lazrek@gmail.com | Architecte Logiciel |
-| **Nizar Es-samy** | nizar.essamy@gmail.com | Responsable Base de Donnees |
-
+| **Sanae Soujaa** | sanae.soujaa@gmail.com | 
+| **Malak Malk** | malak.malk@gmail.com |
+| **Safae Elhamdaoui** | safae.elhamdaoui@gmail.com | 
+| **Mohamed Houssam Lazrek** | houssam.lazrek@gmail.com | 
+| **Nizar Es-samy** | nizar.essamy@gmail.com | 
 ---
 
 ## Table des Matieres
