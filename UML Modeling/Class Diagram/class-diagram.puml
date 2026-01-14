@@ -1,0 +1,246 @@
+@startuml SmartHR Class Diagram
+
+title SmartHR - Diagramme de Classes
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+
+' ============================================================================
+' COUCHE MODELES (Models Layer)
+' ============================================================================
+package "Models" #LightBlue {
+    abstract class BaseModel {
+        {abstract} +tableName: string
+        {abstract} +columns: string[]
+    }
+
+    class User {
+        -id: number
+        -email: string
+        -password: string
+        -created_at: Date
+        -updated_at: Date
+        --
+        +constructor(id, email, password)
+        +toJSON(): object
+    }
+
+    class Candidat {
+        -id: number
+        -proposition: string
+        -name: string
+        -profil: number
+        -statut: number
+        -experience: number
+        -commentaire: string
+        -email: string
+        -created_at: Date
+        -updated_at: Date
+        --
+        +constructor(id, proposition, name, profil, statut, experience, commentaire, email)
+        +toJSON(): object
+        {static} +getProfilLabel(profil): string
+        {static} +getStatutLabel(statut): string
+    }
+
+    class Besoin {
+        -id: number
+        -poste: string
+        -competences: string[]
+        -niveau: number
+        -statut: number
+        -created_at: Date
+        -updated_at: Date
+        --
+        +constructor(id, poste, competences, niveau, statut)
+        +toJSON(): object
+        {static} +getNiveauLabel(niveau): string
+        {static} +getStatutLabel(statut): string
+    }
+}
+
+' ============================================================================
+' COUCHE REPOSITORIES (Data Access Layer)
+' ============================================================================
+package "Repositories" #LightGreen {
+    class BaseRepository<T extends BaseModel> {
+        -Model: class
+        --
+        +constructor(Model)
+        +findAll(): Promise<T[]>
+        +findById(id): Promise<T>
+        +create(data): Promise<T>
+        +update(id, data): Promise<T>
+        +delete(id): Promise<boolean>
+    }
+
+    class UserRepository {
+        --
+        +constructor()
+        +findByEmail(email): Promise<User>
+    }
+
+    class CandidatRepository {
+        --
+        +constructor()
+    }
+
+    class BesoinRepository {
+        --
+        +constructor()
+        +findActive(): Promise<Besoin[]>
+    }
+}
+
+' ============================================================================
+' COUCHE SERVICES (Business Logic Layer)
+' ============================================================================
+package "Services" #LightYellow {
+    class AuthService {
+        -userRepository: UserRepository
+        --
+        +constructor()
+        +validatePassword(password): object
+        +validateEmail(email): boolean
+        +login(email, password): Promise<object>
+        +register(email, password): Promise<object>
+        +verifyToken(token): object
+    }
+
+    class CandidatService {
+        -candidatRepository: CandidatRepository
+        -besoinRepository: BesoinRepository
+        --
+        +constructor()
+        +getAllCandidats(): Promise<Candidat[]>
+        +getCandidatById(id): Promise<Candidat>
+        +createCandidat(data): Promise<Candidat>
+        +updateCandidat(id, data): Promise<Candidat>
+        +deleteCandidat(id): Promise<object>
+        +getCandidatsByBesoin(besoinId): Promise<object>
+        +sendInterviewEmail(candidatId): Promise<object>
+    }
+
+    class BesoinService {
+        -besoinRepository: BesoinRepository
+        --
+        +constructor()
+        +getAllBesoins(): Promise<Besoin[]>
+        +getBesoinById(id): Promise<Besoin>
+        +createBesoin(data): Promise<Besoin>
+        +updateBesoin(id, data): Promise<Besoin>
+        +deleteBesoin(id): Promise<object>
+    }
+}
+
+' ============================================================================
+' COUCHE CONTROLLERS (Presentation Layer)
+' ============================================================================
+package "Controllers" #LightPink {
+    class AuthController {
+        -authService: AuthService
+        --
+        +constructor()
+        +login(req, res): void
+        +register(req, res): void
+    }
+
+    class CandidatController {
+        -candidatService: CandidatService
+        --
+        +constructor()
+        +getAll(req, res): void
+        +getById(req, res): void
+        +create(req, res): void
+        +update(req, res): void
+        +delete(req, res): void
+        +getByBesoin(req, res): void
+        +sendInterviewEmail(req, res): void
+    }
+
+    class BesoinController {
+        -besoinService: BesoinService
+        --
+        +constructor()
+        +getAll(req, res): void
+        +getById(req, res): void
+        +create(req, res): void
+        +update(req, res): void
+        +delete(req, res): void
+    }
+}
+
+' ============================================================================
+' COUCHE CONFIGURATION (Infrastructure Layer)
+' ============================================================================
+package "Config" #LightGray {
+    class Database <<Singleton>> {
+        -pool: Pool
+        --
+        +constructor()
+        +query(text, params): Promise<Result>
+        +transaction(callback): Promise<any>
+    }
+
+    class EmailService <<Singleton>> {
+        -transporter: Transporter
+        --
+        +sendEmail(to, subject, html): Promise<void>
+    }
+}
+
+' ============================================================================
+' RELATIONS D'HERITAGE
+' ============================================================================
+BaseModel <|-- User
+BaseModel <|-- Candidat
+BaseModel <|-- Besoin
+
+BaseRepository <|-- UserRepository
+BaseRepository <|-- CandidatRepository
+BaseRepository <|-- BesoinRepository
+
+' ============================================================================
+' RELATIONS DE COMPOSITION/AGGREGATION
+' ============================================================================
+AuthController o-- AuthService : utilise
+CandidatController o-- CandidatService : utilise
+BesoinController o-- BesoinService : utilise
+
+AuthService o-- UserRepository : utilise
+CandidatService o-- CandidatRepository : utilise
+CandidatService o-- BesoinRepository : utilise
+BesoinService o-- BesoinRepository : utilise
+
+BaseRepository ..> Database : accede
+CandidatService ..> EmailService : utilise
+
+' ============================================================================
+' NOTES
+' ============================================================================
+note right of BaseModel
+    Classe abstraite definissant
+    l'interface commune pour
+    tous les modeles de donnees
+end note
+
+note right of BaseRepository
+    Pattern Repository generique
+    pour les operations CRUD
+    sur la base de donnees
+end note
+
+note bottom of AuthService
+    Gere l'authentification JWT
+    et la validation des
+    mots de passe securises
+end note
+
+note bottom of CandidatService
+    Integre l'IA (Groq API)
+    pour le matching intelligent
+    des candidats aux besoins
+end note
+
+@enduml
