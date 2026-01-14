@@ -1,16 +1,29 @@
 /**
- * SII Skills Connect - Simulateur d'API
+ * SmartHR - Simulateur d'API
  * Simule les appels API en attendant le backend
+ *
+ * Endpoints Backend:
+ * - POST http://localhost:3000/api/users/login
+ * - GET  http://localhost:3000/api/besoins/get
+ * - POST http://localhost:3000/api/besoins/add
+ * - PUT  http://localhost:3000/api/besoins/update
+ * - DELETE http://localhost:3000/api/besoins/delete/:id
+ * - GET  http://localhost:3000/api/candidats/get
+ * - POST http://localhost:3000/api/candidats/add
+ * - PUT  http://localhost:3000/api/candidats/update
+ * - DELETE http://localhost:3000/api/candidats/delete/:id
+ * - GET  http://localhost:3000/api/candidats/par_besoin/:id_besoin
+ * - POST http://localhost:3000/api/candidats/send_mail/:id_candidat
  */
 
-// ========== DONNÉES SIMULÉES ==========
+// ========== DONNEES SIMULEES ==========
 const SIMULATED_DATA = {
     users: [
-        { id: 1, email: 'admin@sii.ma', password: 'admin123' },
-        { id: 2, email: 'user@sii.ma', password: 'user123' }
+        { id: 1, email: 'admin@smarthr.ma', password: 'admin123' },
+        { id: 2, email: 'user@smarthr.ma', password: 'user123' }
     ],
     besoins: [
-        { id: 1, poste: 'Développeur Full Stack', competences: ['React', 'Node.js', 'MongoDB'], niveau: 2, statut: 0 },
+        { id: 1, poste: 'Developpeur Full Stack', competences: ['React', 'Node.js', 'MongoDB'], niveau: 2, statut: 0 },
         { id: 2, poste: 'Data Scientist', competences: ['Python', 'TensorFlow', 'SQL'], niveau: 1, statut: 0 },
         { id: 3, poste: 'DevOps Engineer', competences: ['Docker', 'Kubernetes', 'AWS'], niveau: 0, statut: 1 },
         { id: 4, poste: 'Chef de Projet', competences: ['Agile', 'Scrum', 'Jira'], niveau: 1, statut: 0 },
@@ -19,26 +32,26 @@ const SIMULATED_DATA = {
     candidats: [
         { id: 1, proposition: 'Mission A', name: 'Mohamed El Alami', profil: 0, statut: 1, experience: 5, commentaire: 'Excellent profil', email: 'mohamed@email.com' },
         { id: 2, proposition: 'Mission B', name: 'Fatima Bennani', profil: 1, statut: 2, experience: 3, commentaire: 'Bonne communication', email: 'fatima@email.com' },
-        { id: 3, proposition: 'Mission A', name: 'Ahmed Tazi', profil: 0, statut: 0, experience: 7, commentaire: 'Senior expérimenté', email: 'ahmed@email.com' },
-        { id: 4, proposition: 'Mission C', name: 'Khadija Alaoui', profil: 2, statut: 1, experience: 2, commentaire: 'Junior motivée', email: 'khadija@email.com' },
+        { id: 3, proposition: 'Mission A', name: 'Ahmed Tazi', profil: 0, statut: 0, experience: 7, commentaire: 'Senior experimente', email: 'ahmed@email.com' },
+        { id: 4, proposition: 'Mission C', name: 'Khadija Alaoui', profil: 2, statut: 1, experience: 2, commentaire: 'Junior motivee', email: 'khadija@email.com' },
         { id: 5, proposition: 'Mission B', name: 'Youssef Fassi', profil: 3, statut: 3, experience: 10, commentaire: 'Expert technique', email: 'youssef@email.com' }
     ],
     nextBesoinId: 6,
     nextCandidatId: 6
 };
 
-// Charger les données depuis localStorage si existantes
+// Charger les donnees depuis localStorage si existantes
 function loadSimulatedData() {
-    const saved = localStorage.getItem('sii_simulated_data');
+    const saved = localStorage.getItem('smarthr_simulated_data');
     if (saved) {
         const parsed = JSON.parse(saved);
         Object.assign(SIMULATED_DATA, parsed);
     }
 }
 
-// Sauvegarder les données dans localStorage
+// Sauvegarder les donnees dans localStorage
 function saveSimulatedData() {
-    localStorage.setItem('sii_simulated_data', JSON.stringify(SIMULATED_DATA));
+    localStorage.setItem('smarthr_simulated_data', JSON.stringify(SIMULATED_DATA));
 }
 
 // Initialiser
@@ -46,35 +59,38 @@ loadSimulatedData();
 
 // ========== LABELS ==========
 const LABELS = {
-    profils: ['Développeur', 'Data Scientist', 'DevOps', 'Chef de Projet', 'Designer'],
-    statutsCandidats: ['Junior', 'Intermédiaire', 'Senior', 'Expert'],
+    profils: ['Developpeur', 'Data Scientist', 'DevOps', 'Chef de Projet', 'Designer'],
+    statutsCandidats: ['Junior', 'Intermediaire', 'Senior', 'Expert'],
     niveauxUrgence: ['Faible', 'Moyen', 'Urgent'],
-    statutsBesoins: ['Ouvert', 'Clôturé']
+    statutsBesoins: ['Ouvert', 'Cloture']
 };
 
 // ========== SIMULATEUR API ==========
 const API = {
-    // Délai de simulation (ms)
+    // Delai de simulation (ms)
     delay: 300,
 
-    // Simuler un délai réseau
+    // Simuler un delai reseau
     async simulateDelay() {
         return new Promise(resolve => setTimeout(resolve, this.delay));
     },
 
-    // Vérifier le token
+    // Verifier le token
     verifyToken(token) {
-        return token && token.startsWith('sii_token_');
+        return token && token.startsWith('smarthr_token_');
     },
 
     // ========== AUTH ==========
+    // POST /api/users/login
+    // Body: { Mail: string, pass: string }
+    // Response: { login: boolean, token: string }
     async login(mail, pass) {
         await this.simulateDelay();
 
         const user = SIMULATED_DATA.users.find(u => u.email === mail && u.password === pass);
 
         if (user) {
-            const token = `sii_token_${user.id}_${Date.now()}`;
+            const token = `smarthr_token_${user.id}_${Date.now()}`;
             return { login: true, token };
         }
 
@@ -82,6 +98,9 @@ const API = {
     },
 
     // ========== BESOINS ==========
+    // GET /api/besoins/get
+    // Headers: Authorization: Bearer <token>
+    // Response: { result: false } ou { besoins: [...] }
     async getBesoins(token) {
         await this.simulateDelay();
 
@@ -92,6 +111,10 @@ const API = {
         return { besoins: [...SIMULATED_DATA.besoins] };
     },
 
+    // POST /api/besoins/add
+    // Headers: Authorization: Bearer <token>
+    // Body: { poste: string, competences: [], niveau: 0|1|2, statut: 0|1 }
+    // Response: { id, poste, competences, niveau, statut }
     async addBesoin(token, besoin) {
         await this.simulateDelay();
 
@@ -113,6 +136,10 @@ const API = {
         return { ...newBesoin };
     },
 
+    // PUT /api/besoins/update
+    // Headers: Authorization: Bearer <token>
+    // Body: { id, poste, competences, niveau, statut }
+    // Response: { id, poste, competences, niveau, statut }
     async updateBesoin(token, besoin) {
         await this.simulateDelay();
 
@@ -131,6 +158,9 @@ const API = {
         return { ...besoin };
     },
 
+    // DELETE /api/besoins/delete/:id
+    // Headers: Authorization: Bearer <token>
+    // Response: { result: boolean }
     async deleteBesoin(token, id) {
         await this.simulateDelay();
 
@@ -150,6 +180,9 @@ const API = {
     },
 
     // ========== CANDIDATS ==========
+    // GET /api/candidats/get
+    // Headers: Authorization: Bearer <token>
+    // Response: { result: false } ou { candidats: [...] }
     async getCandidats(token) {
         await this.simulateDelay();
 
@@ -160,6 +193,10 @@ const API = {
         return { candidats: [...SIMULATED_DATA.candidats] };
     },
 
+    // POST /api/candidats/add
+    // Headers: Authorization: Bearer <token>
+    // Body: { proposition, name, profil, statut, experience, commentaire, email }
+    // Response: { id, proposition, name, profil, statut, experience, commentaire, email }
     async addCandidat(token, candidat) {
         await this.simulateDelay();
 
@@ -184,6 +221,10 @@ const API = {
         return { ...newCandidat };
     },
 
+    // PUT /api/candidats/update
+    // Headers: Authorization: Bearer <token>
+    // Body: { id, proposition, name, profil, statut, experience, commentaire, email }
+    // Response: { id, proposition, name, profil, statut, experience, commentaire, email }
     async updateCandidat(token, candidat) {
         await this.simulateDelay();
 
@@ -202,6 +243,9 @@ const API = {
         return { ...candidat };
     },
 
+    // DELETE /api/candidats/delete/:id
+    // Headers: Authorization: Bearer <token>
+    // Response: { result: boolean }
     async deleteCandidat(token, id) {
         await this.simulateDelay();
 
@@ -221,6 +265,9 @@ const API = {
     },
 
     // ========== RECRUTEMENT INTELLIGENT ==========
+    // GET /api/candidats/par_besoin/:id_besoin
+    // Headers: Authorization: Bearer <token>
+    // Response: { id, proposition, name, profil, statut, experience, commentaire, email, percent }
     async getCandidatParBesoin(token, idBesoin) {
         await this.simulateDelay();
 
@@ -235,15 +282,15 @@ const API = {
 
         // Simuler un algorithme de matching
         const candidats = SIMULATED_DATA.candidats.map(c => {
-            // Calculer un pourcentage de compatibilité basé sur le profil et l'expérience
+            // Calculer un pourcentage de compatibilite base sur le profil et l'experience
             let percent = Math.floor(Math.random() * 40) + 60; // Entre 60 et 100
 
-            // Bonus si même catégorie de profil
+            // Bonus si meme categorie de profil
             if (c.profil === besoin.niveau % LABELS.profils.length) {
                 percent = Math.min(100, percent + 10);
             }
 
-            // Bonus basé sur l'expérience
+            // Bonus base sur l'experience
             if (c.experience >= 5) {
                 percent = Math.min(100, percent + 5);
             }
@@ -251,12 +298,15 @@ const API = {
             return { ...c, percent };
         });
 
-        // Trier par pourcentage décroissant et retourner le meilleur
+        // Trier par pourcentage decroissant et retourner le meilleur
         candidats.sort((a, b) => b.percent - a.percent);
 
         return candidats[0] || { result: false };
     },
 
+    // POST /api/candidats/send_mail/:id_candidat
+    // Headers: Authorization: Bearer <token>
+    // Response: { result: boolean, message: string }
     async sendMail(token, idCandidat) {
         await this.simulateDelay();
 
@@ -270,27 +320,27 @@ const API = {
         }
 
         // Simuler l'envoi de mail
-        console.log(`[SIMULATION] Mail envoyé à ${candidat.email} pour proposer un entretien`);
+        console.log(`[SIMULATION] Mail envoye a ${candidat.email} pour proposer un entretien`);
 
-        return { result: true, message: `Email envoyé à ${candidat.email}` };
+        return { result: true, message: `Email envoye a ${candidat.email}` };
     }
 };
 
 // ========== HELPERS HTTP (pour le vrai backend plus tard) ==========
 const HTTP = {
     baseURL: 'http://localhost:3000/api',
-    useSimulation: true, // Mettre à false pour utiliser le vrai backend
+    useSimulation: true, // Mettre a false pour utiliser le vrai backend
 
     getToken() {
-        return localStorage.getItem('sii_token');
+        return localStorage.getItem('smarthr_token');
     },
 
     setToken(token) {
-        localStorage.setItem('sii_token', token);
+        localStorage.setItem('smarthr_token', token);
     },
 
     removeToken() {
-        localStorage.removeItem('sii_token');
+        localStorage.removeItem('smarthr_token');
     },
 
     async request(endpoint, options = {}) {
@@ -319,16 +369,21 @@ const HTTP = {
     },
 
     // ========== API METHODS ==========
+    // POST /api/users/login
+    // Body: { Mail: string, pass: string }
+    // Response: { login: boolean, token: string }
     async login(mail, pass) {
         if (this.useSimulation) {
             return API.login(mail, pass);
         }
         return this.request('/users/login', {
             method: 'POST',
-            body: JSON.stringify({ Mail: mail, pass })
+            body: JSON.stringify({ Mail: mail, pass: pass })
         });
     },
 
+    // GET /api/besoins/get
+    // Headers: Authorization: Bearer <token>
     async getBesoins() {
         if (this.useSimulation) {
             return API.getBesoins(this.getToken());
@@ -336,6 +391,8 @@ const HTTP = {
         return this.request('/besoins/get');
     },
 
+    // POST /api/besoins/add
+    // Body: { poste, competences, niveau, statut }
     async addBesoin(besoin) {
         if (this.useSimulation) {
             return API.addBesoin(this.getToken(), besoin);
@@ -346,6 +403,8 @@ const HTTP = {
         });
     },
 
+    // PUT /api/besoins/update
+    // Body: { id, poste, competences, niveau, statut }
     async updateBesoin(besoin) {
         if (this.useSimulation) {
             return API.updateBesoin(this.getToken(), besoin);
@@ -356,6 +415,7 @@ const HTTP = {
         });
     },
 
+    // DELETE /api/besoins/delete/:id
     async deleteBesoin(id) {
         if (this.useSimulation) {
             return API.deleteBesoin(this.getToken(), id);
@@ -365,6 +425,8 @@ const HTTP = {
         });
     },
 
+    // GET /api/candidats/get
+    // Headers: Authorization: Bearer <token>
     async getCandidats() {
         if (this.useSimulation) {
             return API.getCandidats(this.getToken());
@@ -372,6 +434,8 @@ const HTTP = {
         return this.request('/candidats/get');
     },
 
+    // POST /api/candidats/add
+    // Body: { proposition, name, profil, statut, experience, commentaire, email }
     async addCandidat(candidat) {
         if (this.useSimulation) {
             return API.addCandidat(this.getToken(), candidat);
@@ -382,6 +446,8 @@ const HTTP = {
         });
     },
 
+    // PUT /api/candidats/update
+    // Body: { id, proposition, name, profil, statut, experience, commentaire, email }
     async updateCandidat(candidat) {
         if (this.useSimulation) {
             return API.updateCandidat(this.getToken(), candidat);
@@ -392,6 +458,7 @@ const HTTP = {
         });
     },
 
+    // DELETE /api/candidats/delete/:id
     async deleteCandidat(id) {
         if (this.useSimulation) {
             return API.deleteCandidat(this.getToken(), id);
@@ -401,6 +468,7 @@ const HTTP = {
         });
     },
 
+    // GET /api/candidats/par_besoin/:id_besoin
     async getCandidatParBesoin(idBesoin) {
         if (this.useSimulation) {
             return API.getCandidatParBesoin(this.getToken(), idBesoin);
@@ -408,6 +476,7 @@ const HTTP = {
         return this.request(`/candidats/par_besoin/${idBesoin}`);
     },
 
+    // POST /api/candidats/send_mail/:id_candidat
     async sendMail(idCandidat) {
         if (this.useSimulation) {
             return API.sendMail(this.getToken(), idCandidat);
@@ -426,12 +495,23 @@ const Auth = {
 
     logout() {
         HTTP.removeToken();
-        window.location.href = 'index.html';
+        // Rediriger vers la page Login (index.html)
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/pages/')) {
+            window.location.href = '../index.html';
+        } else {
+            window.location.href = 'index.html';
+        }
     },
 
     checkAuth() {
         if (!this.isLoggedIn()) {
-            window.location.href = 'index.html';
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('/pages/')) {
+                window.location.href = '../index.html';
+            } else {
+                window.location.href = 'index.html';
+            }
             return false;
         }
         return true;

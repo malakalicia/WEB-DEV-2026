@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SII Skills Connect - Candidats</title>
+    <title>SmartHR - Candidats</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@700&display=swap" rel="stylesheet">
@@ -170,11 +170,6 @@
             background: var(--neutral-50);
         }
 
-        .btn-icon.view:hover {
-            border-color: var(--secondary-500);
-            color: var(--secondary-500);
-        }
-
         .btn-icon.edit:hover {
             border-color: var(--primary-500);
             color: var(--primary-500);
@@ -183,15 +178,6 @@
         .btn-icon.delete:hover {
             border-color: var(--danger-500);
             color: var(--danger-500);
-        }
-
-        /* Clickable row */
-        .data-table tbody tr {
-            cursor: pointer;
-        }
-
-        .data-table tbody tr:hover {
-            background: var(--neutral-50);
         }
 
         .btn-icon svg {
@@ -325,15 +311,16 @@
         <a href="../index.html" class="header-logo">
             <svg class="logo-svg" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="22" fill="#636AE8"/>
-                <text x="25" y="32" font-family="Arial" font-size="16" font-weight="bold" fill="white" text-anchor="middle">SII</text>
+                <text x="25" y="32" font-family="Arial" font-size="14" font-weight="bold" fill="white" text-anchor="middle">HR</text>
             </svg>
-            <span class="header-title">Skills Connect</span>
+            <span class="header-title">SmartHR</span>
         </a>
 
         <nav class="header-menu">
             <a href="besoins.html" class="header-menu-item">Besoins</a>
             <a href="candidats.html" class="header-menu-item active">Candidats</a>
             <a href="recrutement-intelligent.html" class="header-menu-item">Recrutement intelligent</a>
+            <a href="recommandations.html" class="header-menu-item">Recommandations</a>
         </nav>
 
         <button class="btn-disconnect" onclick="Auth.logout()">
@@ -406,11 +393,11 @@
     <!-- Footer -->
     <footer class="footer-container">
         <div class="footer-left">
-            <span class="footer-text">2024 SII Maroc - Skills Connect</span>
+            <span class="footer-text">2025 SmartHR. Tous droits reserves.</span>
         </div>
         <div class="footer-right">
-            <a href="#" class="footer-link">Aide</a>
-            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Politique de confidentialite</a>
+            <a href="#" class="footer-link">Conditions d'utilisation</a>
         </div>
     </footer>
 
@@ -583,7 +570,7 @@
                 emptyState.classList.add('hidden');
 
                 tbody.innerHTML = paginatedCandidats.map(candidat => `
-                    <tr onclick="viewCandidat(${candidat.id}, event)">
+                    <tr>
                         <td><strong>#${candidat.id}</strong></td>
                         <td>${candidat.proposition}</td>
                         <td>
@@ -606,13 +593,7 @@
                         <td>${candidat.experience} ans</td>
                         <td class="comment-cell" title="${candidat.commentaire || ''}">${candidat.commentaire || '-'}</td>
                         <td>
-                            <div class="action-buttons" onclick="event.stopPropagation()">
-                                <button class="btn-icon view" onclick="viewCandidat(${candidat.id})" title="Voir le profil">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                </button>
+                            <div class="action-buttons">
                                 <button class="btn-icon edit" onclick="editCandidat(${candidat.id})" title="Modifier">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -688,12 +669,6 @@
         function filterTable() {
             currentPage = 1;
             renderTable();
-        }
-
-        // Voir le profil du candidat
-        function viewCandidat(id, event) {
-            // Navigate to candidate detail page
-            window.location.href = `details-candidat.html?id=${id}`;
         }
 
         // Modal Ajouter
