@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+
+title "Gestion des Besoins"
+
+actor "Recruteur"
+
+rectangle "Système" {
+  (S'authentifier) as Auth <<include>>
+  
+  (Créer un besoin) as Create
+  (Lister les besoins) as List
+  (Consulter un besoin) as View
+  (Modifier un besoin) as Update
+  (Supprimer un besoin) as Delete
+  
+  Create .> Auth : include
+  List .> Auth : include
+  View .> Auth : include
+  Update .> Auth : include
+  Delete .> Auth : include
+}
+
+Recruteur --> Create
+Recruteur --> List
+Recruteur --> View
+Recruteur --> Update
+Recruteur --> Delete
+
+note right of Create
+  **API** : POST /api/besoins/add
+  **Champs** : poste, competences,
+  niveau (0-2), statut (0-1)
+  **JSON competences** : tableau
+end note
+
+note left of List
+  **API** : GET /api/besoins/get
+  **Retour** : Tableau JSON
+end note
+
+note bottom of Update
+  **API** : PUT /api/besoins/update/:id
+  **Authentification requise**
+  Header: Authorization Bearer
+end note
+@enduml

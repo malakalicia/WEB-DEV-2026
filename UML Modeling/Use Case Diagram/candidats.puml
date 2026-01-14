@@ -1,0 +1,59 @@
+@startuml
+left to right direction
+
+title "Gestion des Candidats"
+
+actor "Recruteur"
+
+rectangle "Système" {
+  (S'authentifier) as Auth <<include>>
+  
+  (Ajouter un candidat) as Add
+  (Lister les candidats) as List
+  (Consulter un candidat) as View
+  (Modifier un candidat) as Update
+  (Supprimer un candidat) as Delete
+  
+  (Chercher le candidat le plus compatible pour un besoin en se basant sur l'IA) as SearchIA
+  (Proposer un entretien à un candidat en lui envoyant une invitation par email) as SendEmail
+  
+  Add .> Auth : include
+  List .> Auth : include
+  View .> Auth : include
+  Update .> Auth : include
+  Delete .> Auth : include
+  SearchIA .> Auth : include
+  SendEmail .> Auth : include
+}
+
+Recruteur --> Add
+Recruteur --> List
+Recruteur --> View
+Recruteur --> Update
+Recruteur --> Delete
+Recruteur --> SearchIA
+Recruteur --> SendEmail
+
+note right of Add
+  **API** : POST /api/candidats/add
+  **Champs** : proposition, name,
+  profil (0-4), statut (0-3),
+  experience, commentaire, email
+end note
+
+note left of SearchIA
+  **API** : GET /api/candidats/par_besoin/:id
+  **Processus IA** : 
+  Analyse compatibilité
+  **Retour** : Candidat unique
+  avec pourcentage match
+end note
+
+note bottom of SendEmail
+  **API** : POST /api/candidats/send_mail/:id
+  **Email réel** : Invitation
+  entretien avec détails
+  candidat et poste
+end note
+
+@enduml
