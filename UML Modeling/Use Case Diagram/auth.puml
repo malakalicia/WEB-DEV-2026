@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+
+title "Authentification"
+
+actor "Utilisateur"
+
+rectangle "Système" {
+  (Se connecter) as Login
+  (Se déconnecter) as Logout
+}
+
+Utilisateur --> Login
+Utilisateur --> Logout
+
+note right of Login
+  **API** : POST /api/users/login
+  **Entrée** : email, password
+  **Sortie** : token JWT
+  Stockage : localStorage
+end note
+
+note left of Logout
+  **Action** : 
+  - Suppression token localStorage
+  - Redirection page login
+  **Sécurité** : Session terminée
+end note
+@enduml

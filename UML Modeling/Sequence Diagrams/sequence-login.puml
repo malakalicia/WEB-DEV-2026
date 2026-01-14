@@ -1,0 +1,21 @@
+@startuml
+title "Diagramme de Séquence - Connexion"
+actor Utilisateur
+participant Frontend
+participant Backend
+participant BaseDonnées
+
+Utilisateur -> Frontend : 1. Saisit credentials
+Frontend -> Backend : 2. POST /api/users/login
+Backend -> BaseDonnées : 3. Vérifie utilisateur
+BaseDonnées -> Backend : 4. Retourne utilisateur
+Backend -> Backend : 5. Génère JWT
+Backend -> Frontend : 6. {login: true, token}
+Frontend -> Frontend : 7. Stocke token localStorage
+Frontend -> Utilisateur : 8. Redirige vers dashboard
+
+alt Erreur credentials
+  Backend -> Frontend : {login: false, message}
+  Frontend -> Utilisateur : Affiche erreur
+end
+@enduml

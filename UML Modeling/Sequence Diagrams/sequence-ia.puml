@@ -1,0 +1,27 @@
+@startuml
+title "Diagramme de Séquence - Recrutement IA"
+actor Recruteur
+participant Frontend
+participant Backend
+participant BaseDonnées
+participant "IA" as IA
+
+Recruteur -> Frontend : 1. Sélectionne besoin
+Frontend -> Backend : 2. GET /api/candidats/par_besoin/:id
+Backend -> BaseDonnées : 3. Récupère besoin
+BaseDonnées -> Backend : 4. Retourne besoin
+Backend -> BaseDonnées : 5. Récupère candidats
+BaseDonnées -> Backend : 6. Retourne candidats
+Backend -> Backend : 7. Prépare prompt
+Backend -> IA : 8. Envoie prompt IA
+IA -> Backend : 9. Retourne réponse JSON
+Backend -> Backend : 10. Nettoie backticks
+Backend -> Backend : 11. Parse JSON
+Backend -> Frontend : 12. Retourne candidat + %
+Frontend -> Recruteur : 13. Affiche résultat
+
+alt Erreur IA
+  Backend -> Backend : Fallback simulation
+  Backend -> Frontend : Candidat simulé
+end
+@enduml
