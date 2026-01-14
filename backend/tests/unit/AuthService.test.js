@@ -42,7 +42,7 @@ describe('AuthService', () => {
 
       const result = await authService.login('test@email.com', 'password123');
 
-      expect(result.login).toBe(true);
+      expect(result.success).toBe(true);
       expect(result.token).toBe('fake_token');
       expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('test@email.com');
       expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashed_password');
