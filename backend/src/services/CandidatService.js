@@ -1,25 +1,49 @@
 const CandidatRepository = require('../repositories/CandidatRepository');
 const BesoinRepository = require('../repositories/BesoinRepository');
 const nodemailer = require('nodemailer');
+const {
+  VALID_PROFILS,
+  VALID_STATUTS_CANDIDAT,
+  PROFIL_TYPES,
+  STATUT_CANDIDAT,
+  GROQ_CONFIG,
+  getProfilLabel,
+  getStatutCandidatLabel,
+  getNiveauLabel
+} = require('../constants');
+
+// Constantes pour le pourcentage de simulation
+const SIMULATION_CONFIG = {
+  MIN_PERCENT: 70,
+  MAX_PERCENT: 90
+};
 
 class CandidatService {
-  constructor() {
-    this.candidatRepository = new CandidatRepository();
-    this.besoinRepository = new BesoinRepository();
-    
-    // Configurer nodemailer si les variables existent
+  constructor(
+    candidatRepository = new CandidatRepository(),
+    besoinRepository = new BesoinRepository()
+  ) {
+    this.candidatRepository = candidatRepository;
+    this.besoinRepository = besoinRepository;
+    this.transporter = this.initializeEmailTransporter();
+  }
+
+  /**
+   * Initialise le transporteur email
+   * @returns {object|null} Transporter nodemailer ou null
+   */
+  initializeEmailTransporter() {
     if (process.env.GMAIL_USER && process.env.GMAIL_PASSWORD) {
-      this.transporter = nodemailer.createTransport({
+      return nodemailer.createTransport({
         service: 'gmail',
         auth: {
           user: process.env.GMAIL_USER,
           pass: process.env.GMAIL_PASSWORD
         }
       });
-    } else {
-      this.transporter = null;
-      console.log('⚠️  Gmail non configuré - emails seront simulés');
     }
+    console.log('[INFO] Gmail non configure - emails seront simules');
+    return null;
   }
 
   async getAllCandidats() {
@@ -31,8 +55,12 @@ class CandidatService {
   }
 
   async createCandidat(candidatData) {
-    const validProfil = [0, 1, 2, 3, 4].includes(candidatData.profil) ? candidatData.profil : 0;
-    const validStatut = [0, 1, 2, 3].includes(candidatData.statut) ? candidatData.statut : 0;
+    const validProfil = VALID_PROFILS.includes(candidatData.profil)
+      ? candidatData.profil
+      : PROFIL_TYPES.DEVELOPER;
+    const validStatut = VALID_STATUTS_CANDIDAT.includes(candidatData.statut)
+      ? candidatData.statut
+      : STATUT_CANDIDAT.JUNIOR;
 
     const candidat = await this.candidatRepository.create({
       proposition: candidatData.proposition,
@@ -49,9 +77,9 @@ class CandidatService {
 
   async updateCandidat(id, candidatData) {
     const existingCandidat = await this.candidatRepository.findById(id);
-    
+
     if (!existingCandidat) {
-      throw new Error('Candidat non trouvé');
+      throw new Error('Candidat non trouve');
     }
 
     return await this.candidatRepository.update(id, candidatData);
@@ -59,125 +87,147 @@ class CandidatService {
 
   async deleteCandidat(id) {
     const deleted = await this.candidatRepository.delete(id);
-    
+
     if (!deleted) {
-      throw new Error('Candidat non trouvé');
+      throw new Error('Candidat non trouve');
     }
 
-    return { success: true, message: 'Candidat supprimé avec succès' };
+    return { success: true, message: 'Candidat supprime avec succes' };
   }
 
   async getCandidatsByBesoin(besoinId) {
-    console.log('🚀 APPEL API GROQ - Modèle: llama-3.3-70b-versatile');
-    
-    // Récupérer le besoin
+    console.log(`[INFO] Recherche candidat pour besoin ${besoinId} - Modele: ${GROQ_CONFIG.MODEL}`);
+
     const besoin = await this.besoinRepository.findById(besoinId);
     if (!besoin) {
-      throw new Error('Besoin non trouvé');
+      throw new Error('Besoin non trouve');
     }
 
-    // Récupérer tous les candidats
     const candidats = await this.candidatRepository.findAll();
 
-    // Si pas de candidats, retourner null
     if (candidats.length === 0) {
       return null;
     }
 
     try {
-      // Essayer l'API Groq
       const meilleurCandidat = await this.trouverMeilleurCandidatGroq(besoin, candidats);
-      console.log('✅ GROQ utilisé avec succès');
+      console.log('[INFO] GROQ utilise avec succes');
       return meilleurCandidat;
     } catch (error) {
-      console.log('❌ GROQ échoué, basculement simulation:', error.message);
-      // Fallback à la simulation
+      console.log('[WARN] GROQ echec, basculement simulation:', error.message);
       return this.trouverMeilleurCandidatSimulation(besoin, candidats);
     }
   }
 
+  /**
+   * Trouve le meilleur candidat en utilisant l'API Groq
+   */
   async trouverMeilleurCandidatGroq(besoin, candidats) {
-    // Vérifier si la clé Groq existe
-    if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'ta_clé_groq_ici') {
-      throw new Error('API Groq non configurée');
+    if (!this.isGroqConfigured()) {
+      throw new Error('API Groq non configuree');
     }
 
     const { Groq } = require('groq-sdk');
-    const groq = new Groq({
-      apiKey: process.env.GROQ_API_KEY
-    });
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-    // Préparer les données
+    const prompt = this.buildGroqPrompt(besoin, candidats);
+    const completion = await this.callGroqApi(groq, prompt);
+    const result = this.parseGroqResponse(completion);
+
+    return this.findCandidatFromResult(candidats, result);
+  }
+
+  /**
+   * Verifie si Groq est configure
+   */
+  isGroqConfigured() {
+    return process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== 'ta_cle_groq_ici';
+  }
+
+  /**
+   * Construit le prompt pour Groq
+   */
+  buildGroqPrompt(besoin, candidats) {
     const besoinInfo = `
     BESOIN:
     - Poste: ${besoin.poste}
-    - Compétences requises: ${Array.isArray(besoin.competences) ? besoin.competences.join(', ') : besoin.competences}
-    - Niveau d'urgence: ${besoin.niveau === 2 ? 'Urgent' : besoin.niveau === 1 ? 'Moyen' : 'Faible'}
+    - Competences requises: ${Array.isArray(besoin.competences) ? besoin.competences.join(', ') : besoin.competences}
+    - Niveau d'urgence: ${getNiveauLabel(besoin.niveau)}
     `;
 
     const candidatsInfo = candidats.map(c => `
     CANDIDAT ${c.id}:
     - Nom: ${c.name}
-    - Profil: ${this.getProfilLabel(c.profil)}
-    - Niveau: ${this.getStatutLabel(c.statut)}
-    - Expérience: ${c.experience} ans
-    - Points forts: ${c.commentaire || 'Non spécifié'}
+    - Profil: ${getProfilLabel(c.profil)}
+    - Niveau: ${getStatutCandidatLabel(c.statut)}
+    - Experience: ${c.experience} ans
+    - Points forts: ${c.commentaire || 'Non specifie'}
     `).join('\n');
 
-    const prompt = `
+    return `
     ${besoinInfo}
-    
+
     ${candidatsInfo}
-    
-    TÂCHE: Sélectionne le MEILLEUR SEUL candidat (le plus compatible) pour ce besoin.
-    
-    RÉPONSE UNIQUEMENT EN FORMAT JSON:
+
+    TACHE: Selectionne le MEILLEUR SEUL candidat (le plus compatible) pour ce besoin.
+
+    REPONSE UNIQUEMENT EN FORMAT JSON:
     {
       "id": <id_du_candidat>,
       "pourcentage": <nombre_entre_0_et_100>,
       "raison": "<explication courte (max 15 mots)>"
     }
     `;
+  }
 
-    const completion = await groq.chat.completions.create({
+  /**
+   * Appelle l'API Groq
+   */
+  async callGroqApi(groq, prompt) {
+    return await groq.chat.completions.create({
       messages: [
         {
           role: "system",
-          content: "Tu es un expert en recrutement. Réponds UNIQUEMENT en JSON valide."
+          content: "Tu es un expert en recrutement. Reponds UNIQUEMENT en JSON valide."
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.2,
-      max_tokens: 500
+      model: GROQ_CONFIG.MODEL,
+      temperature: GROQ_CONFIG.TEMPERATURE,
+      max_tokens: GROQ_CONFIG.MAX_TOKENS
     });
+  }
 
+  /**
+   * Parse la reponse Groq
+   */
+  parseGroqResponse(completion) {
     const response = completion.choices[0]?.message?.content;
-    
-    // NETTOYER les backticks markdown si présents
+
     let cleanedResponse = response.trim();
     if (cleanedResponse.startsWith('```')) {
-      // Supprimer ```json et ``` autour du JSON
       cleanedResponse = cleanedResponse
-        .replace(/^```(json)?\s*/i, '')  // Début avec ``` ou ```json
-        .replace(/\s*```$/, '');         // Fin avec ```
-    }
-    
-    // Parser la réponse
-    let result;
-    try {
-      result = JSON.parse(cleanedResponse);
-    } catch (error) {
-      throw new Error('Réponse Groq invalide: ' + response);
+        .replace(/^```(json)?\s*/i, '')
+        .replace(/\s*```$/, '');
     }
 
-    // Trouver le candidat correspondant
+    try {
+      return JSON.parse(cleanedResponse);
+    } catch (error) {
+      throw new Error('Reponse Groq invalide: ' + response);
+    }
+  }
+
+  /**
+   * Trouve le candidat depuis le resultat Groq
+   */
+  findCandidatFromResult(candidats, result) {
     const candidat = candidats.find(c => c.id === result.id);
     if (!candidat) {
-      throw new Error('Candidat ID non trouvé');
+      throw new Error('Candidat ID non trouve');
     }
 
     return {
@@ -187,34 +237,15 @@ class CandidatService {
     };
   }
 
-  getProfilLabel(profil) {
-    const labels = {
-      0: 'Développeur',
-      1: 'Data Scientist',
-      2: 'DevOps',
-      3: 'Chef de Projet',
-      4: 'Designer'
-    };
-    return labels[profil] || 'Autre';
-  }
-
-  getStatutLabel(statut) {
-    const labels = {
-      0: 'Junior',
-      1: 'Intermédiaire',
-      2: 'Senior',
-      3: 'Expert'
-    };
-    return labels[statut] || 'Non spécifié';
-  }
-
+  /**
+   * Simulation de matching quand Groq n'est pas disponible
+   */
   trouverMeilleurCandidatSimulation(besoin, candidats) {
-    // Simulation simple: prendre le candidat avec le plus d'expérience
     const candidatTrie = candidats
       .map(c => ({
         ...c.toJSON(),
-        percent: Math.floor(Math.random() * 20) + 70, // 70-90%
-        raison: "Simulation basée sur l'expérience"
+        percent: Math.floor(Math.random() * (SIMULATION_CONFIG.MAX_PERCENT - SIMULATION_CONFIG.MIN_PERCENT + 1)) + SIMULATION_CONFIG.MIN_PERCENT,
+        raison: "Simulation basee sur l'experience"
       }))
       .sort((a, b) => b.experience - a.experience);
 
@@ -223,63 +254,81 @@ class CandidatService {
 
   async sendInterviewEmail(candidatId) {
     const candidat = await this.candidatRepository.findById(candidatId);
-    
+
     if (!candidat) {
-      throw new Error('Candidat non trouvé');
+      throw new Error('Candidat non trouve');
     }
 
-    // Si Gmail est configuré, envoyer un vrai email
     if (this.transporter && process.env.GMAIL_USER) {
-      try {
-        const mailOptions = {
-          from: process.env.GMAIL_USER,
-          to: candidat.email,
-          subject: 'Invitation à un entretien',
-          html: `
-            <h2>Invitation à un entretien</h2>
-            <p>Bonjour ${candidat.name},</p>
-            <p>Nous sommes intéressés par votre profil et souhaiterions vous rencontrer.</p>
-            <p><strong>Détails :</strong></p>
-            <ul>
-              <li>Proposition : ${candidat.proposition}</li>
-              <li>Profil : ${this.getProfilLabel(candidat.profil)}</li>
-              <li>Statut : ${this.getStatutLabel(candidat.statut)}</li>
-              <li>Expérience : ${candidat.experience} ans</li>
-            </ul>
-            <p>Nous vous contacterons bientôt pour fixer une date.</p>
-            <br>
-            <p>Cordialement,<br>L'équipe de recrutement</p>
-          `
-        };
+      return await this.sendRealEmail(candidat);
+    }
 
-        await this.transporter.sendMail(mailOptions);
-        
-        return {
-          success: true,
-          message: `Email d'entretien envoyé à ${candidat.email}`,
-          candidat: candidat.toJSON(),
-          realEmail: true
-        };
-      } catch (emailError) {
-        console.error('Erreur envoi email:', emailError);
-        // Fallback à la simulation
-        return {
-          success: true,
-          message: `Email d'entretien (simulé) envoyé à ${candidat.email}`,
-          candidat: candidat.toJSON(),
-          realEmail: false,
-          error: emailError.message
-        };
-      }
-    } else {
-      // Simulation si Gmail non configuré
+    return this.simulateEmail(candidat);
+  }
+
+  /**
+   * Envoie un vrai email
+   */
+  async sendRealEmail(candidat) {
+    try {
+      const mailOptions = {
+        from: process.env.GMAIL_USER,
+        to: candidat.email,
+        subject: 'Invitation a un entretien',
+        html: this.buildEmailTemplate(candidat)
+      };
+
+      await this.transporter.sendMail(mailOptions);
+
       return {
         success: true,
-        message: `Email d'entretien (simulé) envoyé à ${candidat.email}`,
+        message: `Email d'entretien envoye a ${candidat.email}`,
         candidat: candidat.toJSON(),
-        realEmail: false
+        realEmail: true
+      };
+    } catch (emailError) {
+      console.error('[ERROR] Erreur envoi email:', emailError.message);
+      return {
+        success: true,
+        message: `Email d'entretien (simule) envoye a ${candidat.email}`,
+        candidat: candidat.toJSON(),
+        realEmail: false,
+        error: emailError.message
       };
     }
+  }
+
+  /**
+   * Simule l'envoi d'email
+   */
+  simulateEmail(candidat) {
+    return {
+      success: true,
+      message: `Email d'entretien (simule) envoye a ${candidat.email}`,
+      candidat: candidat.toJSON(),
+      realEmail: false
+    };
+  }
+
+  /**
+   * Construit le template HTML de l'email
+   */
+  buildEmailTemplate(candidat) {
+    return `
+      <h2>Invitation a un entretien</h2>
+      <p>Bonjour ${candidat.name},</p>
+      <p>Nous sommes interesses par votre profil et souhaiterions vous rencontrer.</p>
+      <p><strong>Details :</strong></p>
+      <ul>
+        <li>Proposition : ${candidat.proposition}</li>
+        <li>Profil : ${getProfilLabel(candidat.profil)}</li>
+        <li>Statut : ${getStatutCandidatLabel(candidat.statut)}</li>
+        <li>Experience : ${candidat.experience} ans</li>
+      </ul>
+      <p>Nous vous contacterons bientot pour fixer une date.</p>
+      <br>
+      <p>Cordialement,<br>L'equipe de recrutement</p>
+    `;
   }
 }
 

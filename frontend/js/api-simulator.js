@@ -14,7 +14,8 @@ const CONFIG = {
     TOKEN_KEY: 'smarthr_token',
     DATA_KEY: 'smarthr_simulated_data',
     SIMULATION_DELAY: 300,
-    USE_SIMULATION: true
+    // Mettre a false pour utiliser le vrai backend, true pour le mode simulation
+    USE_SIMULATION: false
 };
 
 const PASSWORD_RULES = {
@@ -285,12 +286,12 @@ const API = {
 
         if (user) {
             return {
-                login: true,
+                success: true,
                 token: TokenManager.generate(user.id)
             };
         }
 
-        return { login: false, token: '' };
+        return { success: false, token: '' };
     },
 
     // -------------------------------------------------------------------------
@@ -529,7 +530,7 @@ const HTTP = {
         }
         return this.request('/users/login', {
             method: 'POST',
-            body: JSON.stringify({ Mail: mail, pass: pass })
+            body: JSON.stringify({ email: mail, password: pass })
         });
     },
 

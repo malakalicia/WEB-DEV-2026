@@ -1,8 +1,8 @@
 const AuthService = require('../services/AuthService');
 
 class AuthController {
-  constructor() {
-    this.authService = new AuthService();
+  constructor(authService = new AuthService()) {
+    this.authService = authService;
   }
 
   async login(req, res) {
@@ -11,7 +11,7 @@ class AuthController {
 
       if (!email || !password) {
         return res.status(400).json({
-          login: false,
+          success: false,
           message: 'Email et mot de passe sont requis'
         });
       }
@@ -20,7 +20,7 @@ class AuthController {
       res.json(result);
     } catch (error) {
       res.status(401).json({
-        login: false,
+        success: false,
         message: error.message
       });
     }

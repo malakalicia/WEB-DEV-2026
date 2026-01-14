@@ -306,7 +306,7 @@
             try {
                 const response = await HTTP.login(email, password);
 
-                if (response.login === true) {
+                if (response.success === true) {
                     HTTP.setToken(response.token);
                     window.location.href = 'pages/recrutement-intelligent.html';
                 } else {
