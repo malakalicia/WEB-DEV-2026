@@ -507,13 +507,13 @@
         let besoins = [];
         let competencesTags = [];
         let currentPage = 1;
-        let itemsPerPage = 10;
+        const ITEMS_PER_PAGE = 10;
         let deleteId = null;
 
-        // Labels
-        const niveauxLabels = ['Faible', 'Moyen', 'Urgent'];
+        // Utiliser LABELS depuis api-simulator.js (DRY principle)
+        const niveauxLabels = LABELS.niveauxUrgence;
         const niveauxClasses = ['faible', 'moyen', 'urgent'];
-        const statutsLabels = ['Ouvert', 'Cloture'];
+        const statutsLabels = LABELS.statutsBesoins;
         const statutsClasses = ['ouvert', 'cloture'];
 
         // Initialisation
@@ -560,9 +560,9 @@
             });
 
             // Pagination
-            const totalPages = Math.ceil(filteredBesoins.length / itemsPerPage);
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
+            const totalPages = Math.ceil(filteredBesoins.length / ITEMS_PER_PAGE);
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
             const paginatedBesoins = filteredBesoins.slice(start, end);
 
             if (paginatedBesoins.length === 0) {
@@ -614,7 +614,7 @@
         function renderPagination(total, totalPages) {
             const pagination = document.getElementById('pagination');
 
-            if (total <= itemsPerPage) {
+            if (total <= ITEMS_PER_PAGE) {
                 pagination.innerHTML = '';
                 return;
             }
@@ -650,7 +650,7 @@
                 return b.poste.toLowerCase().includes(searchValue) ||
                        b.competences.some(c => c.toLowerCase().includes(searchValue));
             });
-            const totalPages = Math.ceil(filteredBesoins.length / itemsPerPage);
+            const totalPages = Math.ceil(filteredBesoins.length / ITEMS_PER_PAGE);
 
             if (page >= 1 && page <= totalPages) {
                 currentPage = page;

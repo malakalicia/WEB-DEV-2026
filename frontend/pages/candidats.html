@@ -505,13 +505,13 @@
         // Variables globales
         let candidats = [];
         let currentPage = 1;
-        let itemsPerPage = 10;
+        const ITEMS_PER_PAGE = 10;
         let deleteId = null;
 
-        // Labels
-        const profilsLabels = ['Developpeur', 'Data Scientist', 'DevOps', 'Chef de Projet', 'Designer'];
+        // Utiliser LABELS depuis api-simulator.js (DRY principle)
+        const profilsLabels = LABELS.profils;
         const profilsClasses = ['developpeur', 'data-scientist', 'devops', 'chef-projet', 'designer'];
-        const statutsLabels = ['Junior', 'Intermediaire', 'Senior', 'Expert'];
+        const statutsLabels = LABELS.statutsCandidats;
         const statutsClasses = ['junior', 'intermediaire', 'senior', 'expert'];
 
         // Initialisation
@@ -557,9 +557,9 @@
             });
 
             // Pagination
-            const totalPages = Math.ceil(filteredCandidats.length / itemsPerPage);
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
+            const totalPages = Math.ceil(filteredCandidats.length / ITEMS_PER_PAGE);
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
             const paginatedCandidats = filteredCandidats.slice(start, end);
 
             if (paginatedCandidats.length === 0) {
@@ -619,7 +619,7 @@
         function renderPagination(total, totalPages) {
             const pagination = document.getElementById('pagination');
 
-            if (total <= itemsPerPage) {
+            if (total <= ITEMS_PER_PAGE) {
                 pagination.innerHTML = '';
                 return;
             }
@@ -656,7 +656,7 @@
                        c.proposition.toLowerCase().includes(searchValue) ||
                        c.email.toLowerCase().includes(searchValue);
             });
-            const totalPages = Math.ceil(filteredCandidats.length / itemsPerPage);
+            const totalPages = Math.ceil(filteredCandidats.length / ITEMS_PER_PAGE);
 
             if (page >= 1 && page <= totalPages) {
                 currentPage = page;
