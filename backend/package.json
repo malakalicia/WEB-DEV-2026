@@ -1,20 +1,46 @@
 {
-  "name": "recrutement-backend",
+  "name": "smarthr-backend",
   "version": "1.0.0",
-  "description": "Backend pour le système de recrutement intelligent",
+  "description": "Backend API pour SmartHR - Plateforme de recrutement intelligent",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
+
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+
+    "clean": "rm -rf node_modules coverage",
+    "install:deps": "npm install",
+
     "db:init": "node scripts/init-db.js",
-    "build": "npm test && echo '✅ Build réussi'",
-    "deploy": "node scripts/deploy.js"
+    "db:schema": "psql -f sql/schema.sql",
+    "db:seed": "psql -f sql/seed.sql",
+
+    "validate": "npm run test",
+    "build": "npm run validate && echo 'Build successful'",
+    "build:prod": "NODE_ENV=production npm run build",
+
+    "deploy": "node scripts/deploy.js",
+
+    "ci": "npm run clean && npm install && npm run build"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
+  "keywords": [
+    "recruitment",
+    "hr",
+    "ai",
+    "groq",
+    "nodejs",
+    "express",
+    "postgresql"
+  ],
+  "author": "SmartHR Team - ENSIAS 2025-2026",
+  "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

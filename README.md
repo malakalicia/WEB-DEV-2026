@@ -27,13 +27,14 @@
 1. [Description du Projet](#1-description-du-projet)
 2. [Architecture et Technologies](#2-architecture-et-technologies)
 3. [Structure du Projet](#3-structure-du-projet)
-4. [Installation et Configuration](#4-installation-et-configuration)
-5. [Base de Donnees](#5-base-de-donnees)
-6. [API REST](#6-api-rest)
-7. [Modelisation UML](#7-modelisation-uml)
-8. [Tests](#8-tests)
-9. [Processus de Correction de Bugs](#9-processus-de-correction-de-bugs)
-10. [Principes de Conception](#10-principes-de-conception)
+4. [Build System (npm)](#4-build-system-npm)
+5. [Installation et Configuration](#5-installation-et-configuration)
+6. [Base de Donnees](#6-base-de-donnees)
+7. [API REST](#7-api-rest)
+8. [Modelisation UML](#8-modelisation-uml)
+9. [Tests](#9-tests)
+10. [Processus de Correction de Bugs](#10-processus-de-correction-de-bugs)
+11. [Principes de Conception](#11-principes-de-conception)
 
 ---
 
@@ -178,7 +179,72 @@ WEB-DEV-2026/
 
 ---
 
-## 4. Installation et Configuration
+## 4. Build System (npm)
+
+> **Note**: Ce projet utilise **npm** comme build system, equivalent a Maven/Gradle pour les projets Java.
+> npm avec `package.json` gere les dependances, les scripts de build, les tests et le deploiement.
+
+### Comparaison Maven/Gradle vs npm
+
+| Maven/Gradle | npm (Node.js) | Description |
+|--------------|---------------|-------------|
+| `pom.xml` / `build.gradle` | `package.json` | Fichier de configuration |
+| `mvn install` | `npm install` | Installation des dependances |
+| `mvn test` | `npm test` | Execution des tests |
+| `mvn package` | `npm run build` | Build du projet |
+| `mvn clean` | `npm run clean` | Nettoyage |
+| `mvn deploy` | `npm run deploy` | Deploiement |
+
+### Scripts Disponibles
+
+```bash
+# Installation
+npm install              # Installe toutes les dependances
+npm run clean            # Supprime node_modules et coverage
+
+# Developpement
+npm run dev              # Demarre le serveur avec hot-reload (nodemon)
+npm start                # Demarre le serveur en production
+
+# Tests
+npm test                 # Execute tous les tests
+npm run test:watch       # Tests en mode watch
+npm run test:coverage    # Tests avec rapport de couverture
+
+# Build
+npm run validate         # Valide le projet (tests)
+npm run build            # Build complet (validation + build)
+npm run build:prod       # Build pour production
+
+# Base de donnees
+npm run db:init          # Initialise la BDD (schema + seed)
+npm run db:schema        # Execute uniquement le schema
+npm run db:seed          # Execute uniquement le seed
+
+# CI/CD
+npm run ci               # Pipeline complete (clean + install + build)
+npm run deploy           # Deploiement
+```
+
+### Cycle de Build
+
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   CLEAN     │ -> │   INSTALL   │ -> │  VALIDATE   │ -> │   BUILD     │
+│             │    │             │    │             │    │             │
+│ npm clean   │    │ npm install │    │ npm test    │    │ npm build   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+                                                                │
+                                      ┌─────────────┐           │
+                                      │   DEPLOY    │ <─────────┘
+                                      │             │
+                                      │ npm deploy  │
+                                      └─────────────┘
+```
+
+---
+
+## 5. Installation et Configuration
 
 ### Prerequis
 
@@ -246,7 +312,7 @@ npx serve .
 
 ---
 
-## 5. Base de Donnees
+## 6. Base de Donnees
 
 ### Schema de la Base de Donnees
 
@@ -326,7 +392,7 @@ CREATE TRIGGER update_users_updated_at
 
 ---
 
-## 6. API REST
+## 7. API REST
 
 ### Endpoints d'Authentification
 
@@ -375,7 +441,7 @@ curl -X POST http://localhost:3000/api/users/login \
 
 ---
 
-## 7. Modelisation UML
+## 8. Modelisation UML
 
 ### Diagrammes disponibles
 
@@ -400,7 +466,7 @@ Pour visualiser les diagrammes PlantUML:
 
 ---
 
-## 8. Tests
+## 9. Tests
 
 ### Execution des Tests
 
@@ -429,7 +495,7 @@ npm test
 
 ---
 
-## 9. Processus de Correction de Bugs
+## 10. Processus de Correction de Bugs
 
 ### Workflow de Gestion des Bugs
 
@@ -506,7 +572,7 @@ npm test
 
 ---
 
-## 10. Principes de Conception
+## 11. Principes de Conception
 
 ### Principes SOLID Appliques
 
